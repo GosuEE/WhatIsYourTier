@@ -9,8 +9,8 @@ import certifi
 
 ca=certifi.where()
 
-client = MongoClient("mongodb+srv://test:test@cluster0.15fhovx.mongodb.net/test", tlsCAFile=ca)
-db = client.dbsparta_plus_week4
+client = MongoClient("mongodb+srv://minkyu:WhatIsYourTier@cluster0.1drxpub.mongodb.net/test", tlsCAFile=ca)
+db = client.WhatIsYourTier
 
 # JWT 토큰을 만들 때 필요한 비밀문자열입니다. 아무거나 입력해도 괜찮습니다.
 # 이 문자열은 서버만 알고있기 때문에, 내 서버에서만 토큰을 인코딩(=만들기)/디코딩(=풀기) 할 수 있습니다.
@@ -42,17 +42,39 @@ def home():
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
 
-
-@app.route('/login')
-def login():
+@app.route('/login', methods=["GET"])
+def login_get():
     msg = request.args.get("msg")
     return render_template('login.html', msg=msg)
 
-
-@app.route('/register')
-def register():
+@app.route('/register', methods=["GET"])
+def register_get():
     return render_template('register.html')
 
+@app.route('/post', methods=["POST"])
+def post():
+    num = request.form['num']
+    one_post = db.posts.find_one({'num': num})
+    title = one_post['title']
+    text = one_post['text']
+    return jsonify({'msg': '성공', 'title': title,'text':text})
+
+@app.route('/write', methods=["GET"])
+def write_get():
+    return render_template('write.html')
+    # return jsonify({'msg': '성공', 'all_posts': posts})
+
+@app.route('/GNT/write', methods=["POST"])
+def write_post():
+    text = request.form['text']
+    title = request.form['title']
+    
+    all_posts = list(db.posts.find({}, {'_id': False}))
+    doc = {'num': ++len(all_posts),'text': text, 'title': title}
+    print(doc)
+    db.posts.insert_one(doc)
+
+    return jsonify({'msg': '글 작성 완료'})
 
 #################################
 ##  로그인을 위한 API            ##
