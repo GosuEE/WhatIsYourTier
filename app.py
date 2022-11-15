@@ -51,13 +51,19 @@ def login_get():
 def register_get():
     return render_template('register.html')
 
-@app.route('/post', methods=["POST"])
+@app.route('/post', methods=["GET","POST"])
 def post():
-    num = request.form['num']
-    one_post = db.posts.find_one({'num': num})
-    title = one_post['title']
-    text = one_post['text']
-    return jsonify({'msg': '성공', 'title': title,'text':text})
+    if request.method == 'POST':
+        print("post is called")
+        num = request.form['num']
+        one_post = db.posts.find_one({'num': int(num)})
+        print(one_post)
+        title = one_post['title']
+        text = one_post['text']
+        nick = one_post['nick']
+        return jsonify({'title': title,'text':text, 'nick':nick})
+    else:
+        return render_template('post.html')
 
 @app.route('/write', methods=["GET"])
 def write_get():
@@ -68,10 +74,10 @@ def write_get():
 def write_post():
     text = request.form['text']
     title = request.form['title']
-    
+    nick = request.form['nick']
+
     all_posts = list(db.posts.find({}, {'_id': False}))
-    doc = {'num': ++len(all_posts),'text': text, 'title': title}
-    print(doc)
+    doc = {'num': (len(all_posts)+1),'text': text, 'title': title, 'nick': nick}
     db.posts.insert_one(doc)
 
     return jsonify({'msg': '글 작성 완료'})

@@ -1,12 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>게시판</title>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("site is loaded")
+            show_post(1);
+        });
+
+        function show_post(num) {
+            $.ajax({
+                type: "POST",
+                url: "/post",
+                data: { 'num': num },
+                success: function (response) {
+                    console.log('post is success')
+                    let text = response['text']
+                    let title = response['title']
+                    let nick = response['nick']
+
+                    temp_html = `<tr>
+            <th>글제목</th>
+            <td>${title}</td>
+        </tr>
+        <tr>
+            <th>작성자</th>
+            <td>${nick}</td>
+        </tr>
+        <tr>
+            <th>글내용</th>
+            <td>${text}</td>
+        </tr>`
+                    document.getElementById("one_post").insertAdjacentHTML('afterbegin', temp_html);
+                }
+            })
+        }
+    </script>
 </head>
+
 <body>
-    
+    <h1>게시판</h1>
+
+    <table border="1" id="one_post">
+    </table>
+    <button onclick="location.href='main.jsp'">글목록</button>
+    <button onclick="location.href='updateForm.jsp'">글수정</button>
+    <button onclick="location.href='deleteForm.jsp'">글삭제</button>
+
 </body>
+</body>
+
 </html>

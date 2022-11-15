@@ -9,19 +9,20 @@
         function add() {
             console.log('write is called')
 
-            let text = document.getElementById("ucontent").value;
+            let text = document.getElementById("ucontent").value
             let title = document.getElementById("utitle").value
+            let nick = document.getElementById("unickname").value
 
-            $.ajax({
-                type: "POST",
-                url: "/GNT/write",
-                data: { 'text': text, 'title': title },
-                success: function (response) {
-                    alert(response["msg"])
-                    window.location.reload()
-                }
-            });
-        }
+                $.ajax({
+                    type: "POST",
+                    url: "/GNT/write",
+                    data: { 'text': text, 'title': title, 'nick': nick },
+                    success: function (response) {
+                        // alert(response["msg"])
+                        window.location.reload()
+                    }
+                });
+            }
     </script>
 </head>
 
@@ -33,6 +34,11 @@
                 <div id="in_title">
                     <textarea name="title" id="utitle" rows="1" cols="55" placeholder="제목" maxlength="100"
                         required></textarea>
+                </div>
+
+                <div class="nick_name"></div>
+                <div id="in_content">
+                    <textarea name="nickname" id="unickname" placeholder="닉네임" required></textarea>
                 </div>
 
                 <div class="wi_line"></div>
