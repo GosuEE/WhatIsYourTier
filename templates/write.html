@@ -68,8 +68,26 @@
             align-items: center;
             justify-content: center;
         }
-        .bt_se{
+
+        .bt_se {
             margin: 10px 0px 0px 0px;
+        }
+
+        .write_area{
+            display: flex;
+            flex-direction: row;
+
+            float: left;
+        }
+        .myCook{
+            margin: 0px 0px 0px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .myCook > button{
+            margin: 0px 0px 20px 0px;
         }
     </style>
 
@@ -106,26 +124,27 @@
         </div>
     </div>
 
-    <div id="board_write">
-        <div id="write_area">
+    <div class="board_write">
+        <div class="write_area">
             <div class="writing">
                 <h4>글을 작성하는 공간입니다.</h4>
 
                 <div class="input-group mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-default">제목</span>
+                    <span class="input-group-text" id="inputGroup-sizing-default" style="width: 100px">제목</span>
                     <input type="text" class="form-control" id="utitle" aria-label="Sizing example input"
                         aria-describedby="inputGroup-sizing-default">
                 </div>
 
                 <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1">닉네임</span>
+                    <span class="input-group-text" id="basic-addon1" style="width: 100px">닉네임</span>
                     <input type="text" class="form-control" id="unickname" placeholder="" aria-label="Username"
                         aria-describedby="basic-addon1">
                 </div>
 
                 <div class="input-group">
-                    <span class="input-group-text">내용</span>
-                    <textarea class="form-control" aria-label="With textarea" id="ucontent" style="height: 350px;"></textarea>
+                    <span class="input-group-text" style="width: 100px">내용</span>
+                    <textarea class="form-control" aria-label="With textarea" id="ucontent"
+                        style="height: 350px;"></textarea>
                 </div>
 
                 <!-- <div id="in_title">
@@ -147,6 +166,10 @@
                     <button onclick="add()" type="button" class="btn btn-outline-primary">글 작성</button>
                 </div>
 
+            </div>
+            <div class="myCook">
+                <button onclick="window.location.href='/게시판'" type="button" class="btn btn-danger">자유게시판</button>
+                <button onclick="window.location.href='/꿀팁'" type="button" class="btn btn-warning">꿀팁저장소</button>
             </div>
         </div>
     </div>

@@ -49,11 +49,39 @@
             width: auto;
         }
 
-        .one_post {
-            margin: 0 auto;
+        .card {
+            width: 1000px;
+            border-width: 5px;
+            border-radius: 10px;
 
+            margin:20px 20px 0px 0px;
+        }
+
+        .card ul div {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .card ul div div {
+            width: 100px;
+        }
+
+        .card ul div li {
+            width: 100%;
+        }
+
+        .myCook {
             display: flex;
             flex-direction: column;
+        }
+
+        .myCook>button {
+            margin: 0px 0px 20px 0px;
+        }
+
+        .board {
+            display: flex;
+            flex-direction: row;
             align-items: center;
             justify-content: center;
         }
@@ -62,7 +90,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             console.log("site is loaded")
-            show_post(1);
+            show_post(7);
         });
 
         function show_post(num) {
@@ -76,19 +104,13 @@
                     let title = response['title']
                     let nick = response['nick']
 
-                    temp_html = `<tr>
-            <th>글제목</th>
-            <td>${title}</td>
-        </tr>
-        <tr>
-            <th>작성자</th>
-            <td>${nick}</td>
-        </tr>
-        <tr>
-            <th>글내용</th>
-            <td>${text}</td>
-        </tr>`
-                    document.getElementById("one_post").insertAdjacentHTML('afterbegin', temp_html);
+                    let temp_title = `<li class="list-group-item">${title}</li>`
+                    let temp_nick = `<li class="list-group-item">${nick}</li>`
+                    let temp_text = `<li class="list-group-item" style="overflow-y: scroll">${text}</li>`
+
+                    document.getElementById("title").insertAdjacentHTML('beforeend', temp_title);
+                    document.getElementById("nick").insertAdjacentHTML('beforeend', temp_nick);
+                    document.getElementById("text").insertAdjacentHTML('beforeend', temp_text);
                 }
             })
         }
@@ -106,23 +128,45 @@
             </button>
         </div>
     </div>
-
-    <div>
-        <div id="one_post" class="card" style="width: 1000px; border-width: 5px; border-radius: 10px;">
-            <div class="card" style="width: 100%;">
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">An item</li>
-                  <li class="list-group-item">A second item</li>
-                  <li class="list-group-item" style="height: 500px;">A third item</li>
-                </ul>
-              </div>
+    <div class="board">
+        <div class="card">
+            <ul class="list-group">
+                <div id="title">
+                    <div class="card-header">
+                        제목
+                    </div>
+                    <!-- <li class="list-group-item">An item</li> -->
+                </div>
+                <div id="nick">
+                    <div class="card-header">
+                        닉네임
+                    </div>
+                    <!-- <li class="list-group-item">A second item</li> -->
+                </div>
+                <div id="text" style="height: 500px;">
+                    <div class="card-header">
+                        내용
+                    </div>
+                    <!-- <li class="list-group-item">A third item</li> -->
+                </div>
+            </ul>
+        </div>
+        <div class="myCook">
+            <button onclick="window.location.href='/게시판'" type="button" class="btn btn-danger">자유게시판</button>
+            <button onclick="window.location.href='/꿀팁'" type="button" class="btn btn-warning">꿀팁저장소</button>
         </div>
     </div>
+
     <!-- <button onclick="location.href='main.jsp'">글목록</button>
     <button onclick="location.href='updateForm.jsp'">글수정</button>
     <button onclick="location.href='deleteForm.jsp'">글삭제</button> -->
 
-</body>
+
+    <!-- display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center; -->
+
 </body>
 
 </html>
