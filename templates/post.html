@@ -2,11 +2,62 @@
 <html lang="en">
 
 <head>
+    <title>게시판</title>
+
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <title>게시판</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+    <title>WhatIsYourTier</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;500;600;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Noto Serif KR', sans-serif;
+        }
+
+        .mypic {
+            width: 100%;
+            height: 300px;
+
+            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://www.leagueoflegends.co.kr/upload/EditorImages/20160724175134_8QXtFDWe.jpg');
+            background-position: center 22%;
+            background-size: cover;
+
+            color: white;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mypic>button {
+            margin-top: 20px;
+            width: 20%;
+        }
+
+        .mybtn {
+            margin-top: 5px;
+            width: auto;
+        }
+
+        .one_post {
+            margin: 0 auto;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -45,13 +96,31 @@
 </head>
 
 <body>
-    <h1>게시판</h1>
+    <div class="mypic">
+        <h1>League Of Legends: GNT</h1>
+        <h7>GNT implies "So what is your tier?" in Korean</h7>
+        <button onclick="window.location.href='/로그인'" type="button" class="btn btn-success">Sign In Here</button>
+        <div class="mybtn">
+            <button onclick=url"https://download.kr.riotgames.com/league" type="button" class="btn btn-primary">Play
+                Game
+            </button>
+        </div>
+    </div>
 
-    <table border="1" id="one_post">
-    </table>
-    <button onclick="location.href='main.jsp'">글목록</button>
+    <div>
+        <div id="one_post" class="card" style="width: 1000px; border-width: 5px; border-radius: 10px;">
+            <div class="card" style="width: 100%;">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">An item</li>
+                  <li class="list-group-item">A second item</li>
+                  <li class="list-group-item" style="height: 500px;">A third item</li>
+                </ul>
+              </div>
+        </div>
+    </div>
+    <!-- <button onclick="location.href='main.jsp'">글목록</button>
     <button onclick="location.href='updateForm.jsp'">글수정</button>
-    <button onclick="location.href='deleteForm.jsp'">글삭제</button>
+    <button onclick="location.href='deleteForm.jsp'">글삭제</button> -->
 
 </body>
 </body>

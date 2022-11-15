@@ -1,8 +1,77 @@
 <!DOCTYPE html>
+
 <head>
-    <meta charset="UTF-8">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>게시판</title>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+    <title>WhatIsYourTier</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;500;600;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Noto Serif KR', sans-serif;
+        }
+
+        .mypic {
+            width: 100%;
+            height: 300px;
+
+            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://www.leagueoflegends.co.kr/upload/EditorImages/20160724175134_8QXtFDWe.jpg');
+            background-position: center 22%;
+            background-size: cover;
+
+            color: white;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mypic>button {
+            margin-top: 20px;
+            width: 20%;
+        }
+
+        .mybtn {
+            margin-top: 5px;
+            width: auto;
+        }
+
+        .mybox>h1 {
+            width: 100%;
+            margin: auto;
+        }
+
+        .board_write {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .writing {
+            width: 1000px;
+            margin: 20px auto auto auto;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .bt_se{
+            margin: 10px 0px 0px 0px;
+        }
+    </style>
 
     <script>
         function add() {
@@ -12,25 +81,54 @@
             let title = document.getElementById("utitle").value
             let nick = document.getElementById("unickname").value
 
-                $.ajax({
-                    type: "POST",
-                    url: "/GNT/write",
-                    data: { 'text': text, 'title': title, 'nick': nick },
-                    success: function (response) {
-                        // alert(response["msg"])
-                        window.location.reload()
-                    }
-                });
-            }
+            $.ajax({
+                type: "POST",
+                url: "/GNT/write",
+                data: { 'text': text, 'title': title, 'nick': nick },
+                success: function (response) {
+                    // alert(response["msg"])
+                    window.location.reload()
+                }
+            });
+        }
     </script>
 </head>
 
 <body>
+    <div class="mypic">
+        <h1>League Of Legends: GNT</h1>
+        <h7>GNT implies "So what is your tier?" in Korean</h7>
+        <button onclick="window.location.href='/로그인'" type="button" class="btn btn-success">Sign In Here</button>
+        <div class="mybtn">
+            <button onclick=url"https://download.kr.riotgames.com/league" type="button" class="btn btn-primary">Play
+                Game
+            </button>
+        </div>
+    </div>
+
     <div id="board_write">
-        <h4>글을 작성하는 공간입니다.</h4>
         <div id="write_area">
-            <form enctype="multipart/form-data" action="write_ok.php?board_id=<?echo $board_id;?>" method="post">
-                <div id="in_title">
+            <div class="writing">
+                <h4>글을 작성하는 공간입니다.</h4>
+
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-default">제목</span>
+                    <input type="text" class="form-control" id="utitle" aria-label="Sizing example input"
+                        aria-describedby="inputGroup-sizing-default">
+                </div>
+
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">닉네임</span>
+                    <input type="text" class="form-control" id="unickname" placeholder="" aria-label="Username"
+                        aria-describedby="basic-addon1">
+                </div>
+
+                <div class="input-group">
+                    <span class="input-group-text">내용</span>
+                    <textarea class="form-control" aria-label="With textarea" id="ucontent" style="height: 350px;"></textarea>
+                </div>
+
+                <!-- <div id="in_title">
                     <textarea name="title" id="utitle" rows="1" cols="55" placeholder="제목" maxlength="100"
                         required></textarea>
                 </div>
@@ -43,13 +141,15 @@
                 <div class="wi_line"></div>
                 <div id="in_content">
                     <textarea name="content" id="ucontent" placeholder="내용" required></textarea>
-                </div>
+                </div> -->
 
                 <div class="bt_se">
-                    <button onclick="add()" type="button">글 작성</button>
+                    <button onclick="add()" type="button" class="btn btn-outline-primary">글 작성</button>
                 </div>
-            </form>
+
+            </div>
         </div>
     </div>
 </body>
+
 </html>
