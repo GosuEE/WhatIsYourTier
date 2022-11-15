@@ -55,11 +55,8 @@ def register_get():
 @app.route('/post', methods=["GET","POST"])
 def post():
     if request.method == 'POST':
-        print("post is called")
         num = request.form['num']
         one_post = db.posts.find_one({'num': int(num)})
-        print(one_post)
-        print(num)
         title = one_post['title']
         text = one_post['text']
         nick = one_post['nick']
