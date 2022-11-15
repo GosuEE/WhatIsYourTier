@@ -29,7 +29,7 @@ import hashlib
 
 #################################
 ##  HTML을 주는 부분             ##
-#################################
+#################################111
 @app.route('/')
 def home():
     token_receive = request.cookies.get('mytoken')
