@@ -1,0 +1,51 @@
+그님티 API 설계
+메인화면 페이지 로드
+    Method: GET
+    URL: /
+    request:
+    response:
+
+로그인 페이지 로드
+    Method: GET
+    URL: /login
+    request: msg
+    response:
+로그인
+    Method: POST
+    URL: /GNT/login
+    request: {'id': username_give, 'pw': password_give}
+    response:
+    
+회원가입 페이지 로드
+    Method: GET
+    URL: /register
+    request:
+    response:
+회원가입
+    Method: POST
+    URL: /GNT/register
+    request: {'id': user_id, 'pw': user_password}
+    response:
+
+자유 게시판 글 목록 페이지 로드
+    Method: GET
+    URL:  /board
+    request:
+    response: 게시글 목록
+
+게시물 페이지 로드
+    Method: GET
+    URL:  /post
+    request:
+    response: 게시물
+
+게시판 글 작성 페이지 로드
+    Method: GET
+    URL: /write
+    request:
+    reponse:
+게시판 글 작성
+    Method: POST
+    URL: /GNT/write
+    request: {'text': text, 'title': title}
+    reponse:
