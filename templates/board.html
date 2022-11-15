@@ -4,9 +4,202 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>자유게시판</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .mypic {
+            width: 100%;
+            height: 300px;
+
+            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://www.leagueoflegends.co.kr/upload/EditorImages/20160724175134_8QXtFDWe.jpg');
+            background-position: center 22%;
+            background-size: cover;
+
+            color: white;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        caption {
+            display: none;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .btn {
+            float: right;
+            padding-top: 10px;
+            padding-right: 20px;
+
+        }
+
+        .board_list_wrap {
+            padding-top: 40px;
+            padding-right: 20px;
+            padding-left: 20px;
+        }
+
+        .board_list {
+            width: 100%;
+            border-top: 2px solid black;
+        }
+
+        .board_list tr {
+            border-bottom: 1px solid #ccc
+        }
+
+        .board_list th,
+        .board_list td {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .board_list td {
+            text-align: center;
+        }
+
+        .board_list .title{
+            text-align: left;
+        }
+
+        .board_list .title:hover {
+            text-decoration: underline;
+        }
+
+        .board_list_wrap .paging {
+            margin-top: 15px;
+            font-size: 0px;
+            text-align: center;
+
+        }
+
+        .board_list_wrap .paging a {
+            display: inline-block;
+            margin-left: 10px;
+            padding: 10px 13px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 14px;
+            background-color: white;
+        }
+
+        .board_list_wrap .paging a:first-child {
+            margin-left: 0px;
+        }
+
+        .board_list_wrap .searching > button {
+
+        }
+
+    </style>
+    <script>
+        function write_click() {
+            window.location.href = '/게시글 적기 url 넣기!'
+        }
+
+        function main(){
+            window.location.href = '/'
+        }
+
+        $(document).ready(function () {
+            board_list();
+        });
+
+        function board_list() {
+            $.ajax({
+                type: 'GET',
+                url: '/users',
+                data: {},
+                success: function (response) {
+                    let rows = response['all_board']
+                    for (let i = 0; i < rows.length; i++) {
+                         let number = rows[i]['number']
+                         let title = rows[i]['title']
+                        let name = rows[i]['name']
+                        let date = rows[i]['date']
+                        let hits = rows[i]['hits']
+
+                        let temp_html = `<tr>
+                                            <td>${number}</td>
+                                            <td>${title}</td>
+                                            <td>${name}</td>
+                                            <td>${date}</td>
+                                            <td>${hits}</td>
+                                        </tr>`
+
+                        $('#board_content_list').append(temp_html)
+                    }
+                }
+            });
+        }
+
+    </script>
 </head>
+
 <body>
-    
+    <div class="mypic">
+        <h1>League Of Legends: GNT</h1>
+        <h7>GNT implies "So what is your tier?" in Korean</h7>
+    </div>
+    <div class="btn">
+        <button class="write_button" type="button" onclick="main()">메인페이지</button>
+        <button class="write_button" type="button" onclick="write_click()">게시글 작성</button>
+    </div>
+    <div class="board_list_wrap">
+        <table class="board_list">
+            <caption>자유게시판</caption>
+            <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>닉네임</th>
+                    <th>작성일</th>
+                    <th>조회</th>
+                </tr>
+            </thead>
+            <tbody id="board_content_list">
+                <tr>
+                    <td>2</td>
+                    <td class="title">
+                        <a href="#">제목입니다</a>
+                    </td>
+                    <td>박영준</td>
+                    <td>2022.02.22</td>
+                    <td>3333</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td class="title">
+                        <a href="#">제목입니다1</a>
+                    </td>
+                    <td>박영준1</td>
+                    <td>2022.02.221</td>
+                    <td>33331</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="paging">
+            <a href="#" onclick="location.href='여기 url 넣기!'">< 이전</a>
+            <a href="#" onclick="location.href='여기 url 넣기!'">다음 ></a>
+        </div>
+        <div class="searching" style="text-align: center; padding-top: 20px;">
+            <input type=text placeholder="검색">
+            <button>검색</button>
+        </div>
+    </div>
 </body>
 </html>
