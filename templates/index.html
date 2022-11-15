@@ -4,9 +4,25 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Document</title>
 </head>
+<script>
+    function name_cheak() {
+        $.ajax({
+            type: "GET",
+            url: "/api/nick",
+            data: {},
+            success: function (response) {
+                let name = response['name']
+                alert(name)
+            }
+        })
+    }
+</script>
 <body>
-    
+    <button><a a href="/login">로그인</a></button>
+    <button onclick="name_cheak()">확인용</button>
+    <button><a >로그아웃</a></button>
 </body>
 </html>

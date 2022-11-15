@@ -7,10 +7,10 @@ app = Flask(__name__)
 from pymongo import MongoClient
 import certifi
 
-ca=certifi.where()
+ca = certifi.where()
 
-client = MongoClient("mongodb+srv://test:test@cluster0.15fhovx.mongodb.net/test", tlsCAFile=ca)
-db = client.dbsparta_plus_week4
+client = MongoClient("mongodb+srv://test:sparta@cluster0.pfoolfb.mongodb.net/Clustar0?retryWrites=true&w=majority", tlsCAFile=ca)
+db = client.dbsparta_week1
 
 # JWT 토큰을 만들 때 필요한 비밀문자열입니다. 아무거나 입력해도 괜찮습니다.
 # 이 문자열은 서버만 알고있기 때문에, 내 서버에서만 토큰을 인코딩(=만들기)/디코딩(=풀기) 할 수 있습니다.
@@ -36,11 +36,12 @@ def home():
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.user.find_one({"id": payload['id']})
-        return render_template('index.html', nickname=user_info["nick"])
+        return render_template('index.html', nickname=user_info["name"])
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
+
 
 
 @app.route('/login')
@@ -53,6 +54,14 @@ def login():
 def register():
     return render_template('register.html')
 
+@app.route('/search_id')
+def search_id():
+    return render_template('search_id.html')
+
+@app.route('/search_pw')
+def search_pw():
+    return render_template('search_pw.html')
+
 
 #################################
 ##  로그인을 위한 API            ##
@@ -61,22 +70,50 @@ def register():
 # [회원가입 API]
 # id, pw, nickname을 받아서, mongoDB에 저장합니다.
 # 저장하기 전에, pw를 sha256 방법(=단방향 암호화. 풀어볼 수 없음)으로 암호화해서 저장합니다.
-@app.route('/api/register', methods=['POST'])
+
+
+
+@app.route('/register', methods=['POST'])
 def api_register():
     id_receive = request.form['id_give']
     pw_receive = request.form['pw_give']
-    nickname_receive = request.form['nickname_give']
+    email_receive = request.form['email_give']
+    name_receive = request.form['name_give']
+    phone_receive = request.form['phone_give']
+
+    if db.user.find_one({'id': id_receive}):
+        return jsonify({'msg': '동일한 아이디가 존재합니다 !'})
+
+    elif db.user.find_one({'name': name_receive}):
+        return jsonify({'msg': '동일한 닉네임이 존재합니다 !'})
+    elif id_receive == "":
+        return jsonify({'msg': '아이디를 입력해주세요 !'})
+    elif pw_receive == "":
+        return jsonify({'msg': '비밀번호를 입력해주세요 !'})
+    elif email_receive == "":
+        return jsonify({'msg': '이메일을 입력해주세요 !'})
+    elif name_receive == "":
+        return jsonify({'msg': '이름을 입력해주세요 !'})
+    elif phone_receive == "":
+        return jsonify({'msg': '이름을 입력해주세요 !'})
 
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
 
-    db.user.insert_one({'id': id_receive, 'pw': pw_hash, 'nick': nickname_receive})
+    doc = {
+        'id' : id_receive,
+        'pw' : pw_hash,
+        'email' : email_receive,
+        'name' : name_receive,
+        'phone' : phone_receive
+    }
+    db.user.insert_one(doc)
 
     return jsonify({'result': 'success'})
 
 
 # [로그인 API]
 # id, pw를 받아서 맞춰보고, 토큰을 만들어 발급합니다.
-@app.route('/api/login', methods=['POST'])
+@app.route('/login', methods=['POST'])
 def api_login():
     id_receive = request.form['id_give']
     pw_receive = request.form['pw_give']
@@ -95,10 +132,10 @@ def api_login():
         # exp에는 만료시간을 넣어줍니다. 만료시간이 지나면, 시크릿키로 토큰을 풀 때 만료되었다고 에러가 납니다.
         payload = {
             'id': id_receive,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=5)
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
-
+        print(token)
         # token을 줍니다.
         return jsonify({'result': 'success', 'token': token})
     # 찾지 못하면
@@ -121,18 +158,30 @@ def api_valid():
         # token을 시크릿키로 디코딩합니다.
         # 보실 수 있도록 payload를 print 해두었습니다. 우리가 로그인 시 넣은 그 payload와 같은 것이 나옵니다.
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        print(payload)
+
 
         # payload 안에 id가 들어있습니다. 이 id로 유저정보를 찾습니다.
         # 여기에선 그 예로 닉네임을 보내주겠습니다.
         userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
-        return jsonify({'result': 'success', 'nickname': userinfo['nick']})
+        return jsonify({'result': 'success', 'name': userinfo['name']})
     except jwt.ExpiredSignatureError:
         # 위를 실행했는데 만료시간이 지났으면 에러가 납니다.
         return jsonify({'result': 'fail', 'msg': '로그인 시간이 만료되었습니다.'})
     except jwt.exceptions.DecodeError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
+@app.route("/id_cheak", methods=["GET"]) # 아이디 중복 찾기
+def id_cheak():
+    user_list = list(db.user.find({}, {'_id': False}))
+    return jsonify({'users': user_list})
+
+@app.route('/change_pw', methods=['POST'])
+def change_pw():
+    id_receive = request.form['id_give']
+    pw_receive = request.form['pw_give']
+    pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
+    db.user.update_one({'id': id_receive}, {'$set': {'pw': pw_hash}})
+    return jsonify({'result': 'success'})
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
