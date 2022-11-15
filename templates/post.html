@@ -54,7 +54,7 @@
             border-width: 5px;
             border-radius: 10px;
 
-            margin:20px 20px 0px 0px;
+            margin: 20px 20px 0px 0px;
         }
 
         .card ul div {
@@ -89,28 +89,27 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            console.log("site is loaded")
-            show_post(7);
+            show_post({{ num }});
         });
 
         function show_post(num) {
             $.ajax({
                 type: "POST",
                 url: "/post",
-                data: { 'num': num },
+                data: { num : num },
                 success: function (response) {
                     console.log('post is success')
-                    let text = response['text']
+                    let contents = response['contents']
                     let title = response['title']
-                    let nick = response['nick']
+                    let nick = response['user']
 
                     let temp_title = `<li class="list-group-item">${title}</li>`
                     let temp_nick = `<li class="list-group-item">${nick}</li>`
-                    let temp_text = `<li class="list-group-item" style="overflow-y: scroll">${text}</li>`
+                    let temp_text = `<li class="list-group-item" style="overflow-y: scroll">${contents}</li>`
 
                     document.getElementById("title").insertAdjacentHTML('beforeend', temp_title);
                     document.getElementById("nick").insertAdjacentHTML('beforeend', temp_nick);
-                    document.getElementById("text").insertAdjacentHTML('beforeend', temp_text);
+                    document.getElementById("contents").insertAdjacentHTML('beforeend', temp_text);
                 }
             })
         }
@@ -121,11 +120,11 @@
     <div class="mypic">
         <h1>League Of Legends: GNT</h1>
         <h7>GNT implies "So what is your tier?" in Korean</h7>
-        <button onclick="window.location.href='/로그인'" type="button" class="btn btn-success">Sign In Here</button>
+        <!-- <button onclick="window.location.href='/로그인'" type="button" class="btn btn-success">Sign In Here</button>
         <div class="mybtn">
             <button onclick=url"https://download.kr.riotgames.com/league" type="button" class="btn btn-primary">Play
                 Game
-            </button>
+            </button> -->
         </div>
     </div>
     <div class="board">
@@ -143,7 +142,7 @@
                     </div>
                     <!-- <li class="list-group-item">A second item</li> -->
                 </div>
-                <div id="text" style="height: 500px;">
+                <div id="contents" style="height: 500px;">
                     <div class="card-header">
                         내용
                     </div>
@@ -152,7 +151,7 @@
             </ul>
         </div>
         <div class="myCook">
-            <button onclick="window.location.href='/게시판'" type="button" class="btn btn-danger">자유게시판</button>
+            <button onclick="window.location.href='/board'" type="button" class="btn btn-danger">자유게시판</button>
             <button onclick="window.location.href='/꿀팁'" type="button" class="btn btn-warning">꿀팁저장소</button>
         </div>
     </div>

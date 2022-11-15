@@ -95,17 +95,17 @@
         function add() {
             console.log('write is called')
 
-            let text = document.getElementById("ucontent").value
+            let contents = document.getElementById("ucontent").value
             let title = document.getElementById("utitle").value
-            let nick = document.getElementById("unickname").value
+            //let nick = document.getElementById("unickname").value
 
             $.ajax({
                 type: "POST",
                 url: "/GNT/write",
-                data: { 'text': text, 'title': title, 'nick': nick },
+                data: { 'contents_give': contents, 'title_give': title},
                 success: function (response) {
-                    // alert(response["msg"])
-                    window.location.reload()
+                    alert(response["msg"])
+                    window.location.href = '/board'
                 }
             });
         }
@@ -116,11 +116,11 @@
     <div class="mypic">
         <h1>League Of Legends: GNT</h1>
         <h7>GNT implies "So what is your tier?" in Korean</h7>
-        <button onclick="window.location.href='/로그인'" type="button" class="btn btn-success">Sign In Here</button>
+        <!-- <button onclick="window.location.href='/로그인'" type="button" class="btn btn-success">Sign In Here</button>
         <div class="mybtn">
             <button onclick=url"https://download.kr.riotgames.com/league" type="button" class="btn btn-primary">Play
                 Game
-            </button>
+            </button> -->
         </div>
     </div>
 
@@ -135,11 +135,11 @@
                         aria-describedby="inputGroup-sizing-default">
                 </div>
 
-                <div class="input-group mb-3">
+                <!-- <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1" style="width: 100px">닉네임</span>
                     <input type="text" class="form-control" id="unickname" placeholder="" aria-label="Username"
                         aria-describedby="basic-addon1">
-                </div>
+                </div> -->
 
                 <div class="input-group">
                     <span class="input-group-text" style="width: 100px">내용</span>
@@ -168,7 +168,7 @@
 
             </div>
             <div class="myCook">
-                <button onclick="window.location.href='/게시판'" type="button" class="btn btn-danger">자유게시판</button>
+                <button onclick="window.location.href='/board'" type="button" class="btn btn-danger">자유게시판</button>
                 <button onclick="window.location.href='/꿀팁'" type="button" class="btn btn-warning">꿀팁저장소</button>
             </div>
         </div>

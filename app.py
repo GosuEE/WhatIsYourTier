@@ -14,13 +14,21 @@ ca = certifi.where()
 client = MongoClient("mongodb+srv://minkyu:WhatIsYourTier@cluster0.1drxpub.mongodb.net/test", tlsCAFile=ca)
 db = client.WhatIsYourTier
 
-@app.route("/board/get", methods=["GET"])
-def board_get():
-    board_list = list(db.board.find({}, {'_id': False}))
+@app.route("/board", methods=["GET"])
+def board():
+    return render_template('board.html')
 
-    return jsonify({'boards': board_list})
+@app.route("/board/list", methods=["GET"])
+def board_list():
+    board_list = list(db.board.find({},{'_id':False}))
+    return jsonify({'result': 'success', 'all_board': board_list})
 
-@app.route('/board/post', methods=['POST'])
+# @app.route("/users", methods=["GET"])
+# # def board_get():
+#     board_list = list(db.board.find({},{'_id':False}))
+#     return jsonify({'result': 'success', 'all_board': board_list})
+
+@app.route('/GNT/write', methods=['POST'])
 def board_POST():
     # board DB에 들어갈 데이터 목록 -------------------------------
     # number_receive    글번호         app.py에서 구현
@@ -37,14 +45,15 @@ def board_POST():
     # -------------------------------------------------------
 
     # name_receive 구현 -------------------------------------
-    user_list = list(db.user.find({}, {'_id': False}))
-    cnt = len(user_list)
-    sessionID = session['id']
-    name = ''
+    # user_list = list(db.user.find({}, {'_id': False}))
+    # cnt = len(user_list)
+    # print('session' + session)
+    # sessionID = session['id']
+    # name = ''
 
-    for i in range(cnt):
-        if user_list[i]['id'] == sessionID:
-            name = user_list[i]['name']
+    # for i in range(cnt):
+    #     if user_list[i]['id'] == sessionID:
+    #         name = user_list[i]['name']
     # ------------------------------------------------------
 
     # date_receive 구현 -------------------------------------
@@ -56,37 +65,34 @@ def board_POST():
     number_receive = count
     title_receive = request.form['title_give']
     contents_receive = request.form['contents_give']
-    boardurl_reveive = request.form['boardurl_give']
-    name_receive = name
+    hits = 0
+    # boardurl_reveive = request.form['boardurl_give']
+    # name_receive = name
     date_receive = date
-
-    doc = {
-        'number': number_receive,
-        'title': title_receive,
-        'contents': contents_receive,
-        'name': name_receive,
-        'date': date_receive,
-        'boardurl': boardurl_reveive
-
-    }
-    db.board.insert_one(doc)
-    # -------------------------------------------------------
-
-    return jsonify({'msg': '등록 완료 !'})
-
-@app.route("/board_write")
-def board_write_html():
-    return render_template("board_write.html")
     
-@app.route('/')
-def home():
-    return render_template('board.html')
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.user.find_one({"id": payload['id']})
+        user = user_info['id']
+        doc = {
+            'number': number_receive,
+            'title': title_receive,
+            'contents': contents_receive,
+            # 'name': name_receive,
+            'date': date_receive,
+            # 'boardurl': boardurl_reveive
+            'id' : user,
+            'hits': hits
+        }
+        db.board.insert_one(doc)
+        return jsonify({'msg': '등록 완료 !'})
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
 
-@app.route("/users", methods=["GET"])
-def board_get():
-    board_list = list(db.users.find({}, {'_id': False}))
 
-    return jsonify({'result': 'success', 'all_board': board_list})
 
 # JWT 토큰을 만들 때 필요한 비밀문자열입니다. 아무거나 입력해도 괜찮습니다.
 # 이 문자열은 서버만 알고있기 때문에, 내 서버에서만 토큰을 인코딩(=만들기)/디코딩(=풀기) 할 수 있습니다.
@@ -106,10 +112,6 @@ import hashlib
 #################################
 ##  HTML을 주는 부분             ##
 #################################
-@app.route('/board')
-def home():
-    return render_template('index.1.html')
-
 @app.route('/')
 def home():
     token_receive = request.cookies.get('mytoken')
@@ -131,35 +133,47 @@ def login():
 def register_get():
     return render_template('register.html')
 
+@app.route('/post/<int:number>', methods=["GET"])
+def post(number):
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.user.find_one({"id": payload['id']})
+        return render_template("post.html", num = number)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
+
+
 @app.route('/post', methods=["GET","POST"])
-def post():
-    if request.method == 'POST':
-        num = request.form['num']
-        one_post = db.posts.find_one({'num': int(num)})
-        title = one_post['title']
-        text = one_post['text']
-        nick = one_post['nick']
-        return jsonify({'title': title,'text':text, 'nick':nick})
-    else:
-        return render_template('post.html')
+def post_show():
+        token_receive = request.cookies.get('mytoken')
+        try:
+            payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+            user_info = db.user.find_one({"id": payload['id']})['id']
+            number = request.form['num']
+            one_post = db.board.find_one({'number': int(number)})
+            title = one_post['title']
+            contents = one_post['contents']
+            return jsonify({'title': title, 'contents': contents, 'user': user_info})
+        except jwt.ExpiredSignatureError:
+            return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
+        except jwt.exceptions.DecodeError:
+            return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
 
 @app.route('/write', methods=["GET"])
 def write_get():
-    return render_template('write.html')
-    # return jsonify({'msg': '성공', 'all_posts': posts})
-
-@app.route('/GNT/write', methods=["POST"])
-def write_post():
-    text = request.form['text']
-    title = request.form['title']
-    nick = request.form['nick']
-
-    all_posts = list(db.posts.find({}, {'_id': False}))
-    doc = {'num': (len(all_posts)+1),'text': text, 'title': title, 'nick': nick}
-    db.posts.insert_one(doc)
-
-    return jsonify({'msg': '글 작성 완료'})
-
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.user.find_one({"id": payload['id']})
+        return render_template('write.html', nickname=user_info["name"])
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
+    
 @app.route('/search_id')
 def search_id():
     return render_template('search_id.html')
