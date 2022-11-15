@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, render_template, jsonify, request, session, redirect, url_for
-
 app = Flask(__name__)
 
 from pymongo import MongoClient
+client = MongoClient('mongodb+srv://test:sparta@cluster0.xmayriq.mongodb.net/Cluster0?retryWrites=true&w=majority')
+db = client.dbsparta
+
 import certifi
 
 ca = certifi.where()
@@ -103,7 +105,11 @@ import hashlib
 
 #################################
 ##  HTML을 주는 부분             ##
-#################################111
+#################################
+@app.route('/board')
+def home():
+    return render_template('index.1.html')
+
 @app.route('/')
 def home():
     token_receive = request.cookies.get('mytoken')
