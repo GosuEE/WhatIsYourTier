@@ -154,6 +154,7 @@
     #mail_cheak{
         float: left;
         display: none;
+        color: red;
     }
 
     a {
@@ -251,9 +252,21 @@
         }
     }
     function check_mail() {
-        console.log($('#user_email').val())
-
+        var str = $('#user_email').val()
+        var reg_email = /^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/;
+     if(!reg_email.test(str)) {
+         console.log(false)
+         $('#mail_cheak').show();
+          return false;
+     }
+     else {
+         console.log(true)
+         $('#mail_cheak').hide();
+          return true;
+     }
     }
+
+
 </script>
 <body>
 <header>
@@ -293,7 +306,7 @@
     <div class="input-box">
         <input id="user_email" type="text" name="user_email" placeholder="이메일" oninput= "check_mail()">
         <label for="user_email">이메일</label>
-        <p id="mail_cheak">이메일 형식이 올마르지 않습니다.</p>
+        <p id="mail_cheak">이메일 형식이 올바르지 않습니다.</p>
     </div>
 
     <p class="space">　</p>
