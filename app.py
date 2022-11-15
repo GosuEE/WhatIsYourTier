@@ -12,6 +12,79 @@ ca = certifi.where()
 client = MongoClient("mongodb+srv://minkyu:WhatIsYourTier@cluster0.1drxpub.mongodb.net/test", tlsCAFile=ca)
 db = client.WhatIsYourTier
 
+@app.route("/board/get", methods=["GET"])
+def board_get():
+    board_list = list(db.board.find({}, {'_id': False}))
+
+    return jsonify({'boards': board_list})
+
+@app.route('/board/post', methods=['POST'])
+def board_POST():
+    # board DB에 들어갈 데이터 목록 -------------------------------
+    # number_receive    글번호         app.py에서 구현
+    # title_receive     제목          html에서 받아옴
+    # contents_receive  내용          html에서 받아옴
+    # url_give
+    # name_receive      이름(아이디X)   app.py에서 구현
+    # date_receive      등록일         app.py에서 구현
+    # ------------------------------------- ----------------
+
+    # number_receive 구현 ------------------------------------
+    board_list = list(db.board.find({}, {'_id': False}))
+    count = len(board_list) + 1
+    # -------------------------------------------------------
+
+    # name_receive 구현 -------------------------------------
+    user_list = list(db.user.find({}, {'_id': False}))
+    cnt = len(user_list)
+    sessionID = session['id']
+    name = ''
+
+    for i in range(cnt):
+        if user_list[i]['id'] == sessionID:
+            name = user_list[i]['name']
+    # ------------------------------------------------------
+
+    # date_receive 구현 -------------------------------------
+    now = datetime.datetime.now()
+    date = now.strftime('%Y-%m-%d %H:%M:%S')
+    # ------------------------------------------------------
+
+    # board DB에 데이터 등록 ------------------------------------
+    number_receive = count
+    title_receive = request.form['title_give']
+    contents_receive = request.form['contents_give']
+    boardurl_reveive = request.form['boardurl_give']
+    name_receive = name
+    date_receive = date
+
+    doc = {
+        'number': number_receive,
+        'title': title_receive,
+        'contents': contents_receive,
+        'name': name_receive,
+        'date': date_receive,
+        'boardurl': boardurl_reveive
+
+    }
+    db.board.insert_one(doc)
+    # -------------------------------------------------------
+
+    return jsonify({'msg': '등록 완료 !'})
+
+@app.route("/board_write")
+def board_write_html():
+    return render_template("board_write.html")
+    
+@app.route('/')
+def home():
+    return render_template('board.html')
+
+@app.route("/users", methods=["GET"])
+def board_get():
+    board_list = list(db.users.find({}, {'_id': False}))
+
+    return jsonify({'result': 'success', 'all_board': board_list})
 
 # JWT 토큰을 만들 때 필요한 비밀문자열입니다. 아무거나 입력해도 괜찮습니다.
 # 이 문자열은 서버만 알고있기 때문에, 내 서버에서만 토큰을 인코딩(=만들기)/디코딩(=풀기) 할 수 있습니다.

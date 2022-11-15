@@ -1,709 +1,199 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>자유게시판</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-            crossorigin="anonymous"></script>
+    .mypic {
+        width: 100%;
+        height: 300px;
 
-    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
-    <title>WhatIsYourTier</title>
+        background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://www.leagueoflegends.co.kr/upload/EditorImages/20160724175134_8QXtFDWe.jpg');
+        background-position: center 22%;
+        background-size: cover;
 
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;500;600;700;900&display=swap"
-          rel="stylesheet">
-    <style>
-        * {
-            font-family: 'Noto Serif KR', sans-serif;
-        }
+        color: white;
 
-        .mypic {
-            width: 100%;
-            height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 
-            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://www.leagueoflegends.co.kr/upload/EditorImages/20160724175134_8QXtFDWe.jpg');
-            background-position: center 22%;
-            background-size: cover;
+    table {
+        border-collapse: collapse;
+    }
 
-            color: white;
+    caption {
+        display: none;
+    }
 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
 
-        .mypic > button {
-            margin-top: 20px;
-            width: 20%;
-        }
+    .btn {
+        float: right;
+        padding-top: 10px;
+        padding-right: 20px;
 
-        .mybtn {
-            margin-top: 5px;
-            width: auto;
-        }
+    }
 
+    .board_list_wrap {
+        padding-top: 40px;
+        padding-right: 20px;
+        padding-left: 20px;
+    }
 
-        .mybox > h1 {
-            width: 100%;
-            margin: auto;
-        }
+    .board_list {
+        width: 100%;
+        border-top: 2px solid black;
+    }
 
-        .myCook {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-        }
+    .board_list tr {
+        border-bottom: 1px solid #ccc
+    }
 
-        .myCook > input {
-            width: 70%;
-        }
+    .board_list th,
+    .board_list td {
+        padding: 10px;
+        font-size: 14px;
+    }
 
-        .myCook > button {
-            margin: 10px 50px 20px 50px;
-            width: 50%;
-            height: 70px;
-        }
+    .board_list td {
+        text-align: center;
+    }
 
-        .mybox > li {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
+    .board_list .title{
+        text-align: left;
+    }
 
-            margin-bottom: 10px;
-            min-height: 48px;
-        }
+    .board_list .title:hover {
+        text-decoration: underline;
+    }
 
-        .mybox > li > h2 {
-            max-width: 75%;
-            font-size: 20px;
-            font-weight: 500;
-            margin-right: auto;
-            margin-bottom: 0px;
-        }
+    .board_list_wrap .paging {
+        margin-top: 15px;
+        font-size: 0px;
+        text-align: center;
 
-        .mybox > li > h2.done {
-            text-decoration: line-through
-        }
-    </style>
+    }
 
+    .board_list_wrap .paging a {
+        display: inline-block;
+        margin-left: 10px;
+        padding: 10px 13px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 14px;
+        background-color: white;
+    }
+
+    .board_list_wrap .paging a:first-child {
+        margin-left: 0px;
+    }
+/* 
+    .board_list_wrap .searching > button {
+
+    } */
+
+</style>
+<script>
+    function write_click() {
+        window.location.href = '/게시글 적기 url 넣기!'
+    }
+
+    function main(){
+        window.location.href = '/'
+    }
+
+    $(document).ready(function () {
+        board_list();
+    });
+
+    function board_list() {
+        $.ajax({
+            type: 'GET',
+            url: '/users',
+            data: {},
+            success: function (response) {
+                let rows = response['all_board']
+                for (let i = 0; i < rows.length; i++) {
+                     let number = rows[i]['number']
+                     let title = rows[i]['title']
+                    let name = rows[i]['name']
+                    let date = rows[i]['date']
+                    let hits = rows[i]['hits']
+
+                    let temp_html = `<tr>
+                                        <td>${number}</td>
+                                        <td>${title}</td>
+                                        <td>${name}</td>
+                                        <td>${date}</td>
+                                        <td>${hits}</td>
+                                    </tr>`
+
+                    $('#board_content_list').append(temp_html)
+                }
+            }
+        });
+    }
+
+</script>
 </head>
+
 <body>
 <div class="mypic">
     <h1>League Of Legends: GNT</h1>
     <h7>GNT implies "So what is your tier?" in Korean</h7>
-    <button onclick="window.location.href='/로그인'" type="button" class="btn btn-success">Sign In Here</button>
-    <div class="mybtn">
-        <button onclick=url"https://download.kr.riotgames.com/league" type="button" class="btn btn-primary">Play Game
-        </button>
+</div>
+<div class="btn">
+    <button class="write_button" type="button" onclick="main()">메인페이지</button>
+    <button class="write_button" type="button" onclick="write_click()">게시글 작성</button>
+</div>
+<div class="board_list_wrap">
+    <table class="board_list">
+        <caption>자유게시판</caption>
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>닉네임</th>
+                <th>작성일</th>
+                <th>조회</th>
+            </tr>
+        </thead>
+        <tbody id="board_content_list">
+            <tr>
+                <td>2</td>
+                <td class="title">
+                    <a href="#">제목입니다</a>
+                </td>
+                <td>박영준</td>
+                <td>2022.02.22</td>
+                <td>3333</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td class="title">
+                    <a href="#">제목입니다1</a>
+                </td>
+                <td>박영준1</td>
+                <td>2022.02.221</td>
+                <td>33331</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="paging">
+        <a href="#" onclick="location.href='여기 url 넣기!'">< 이전</a>
+        <a href="#" onclick="location.href='여기 url 넣기!'">다음 ></a>
     </div>
-
-</div>
-
-<div class="myCook">
-    <button onclick="window.location.href='/게시판'" type="button" class="btn btn-danger">자유게시판</button>
-    <button onclick="window.location.href='/꿀팁'" type="button" class="btn btn-warning">꿀팁저장소</button>
-</div>
-
-<div class="card text">
-
-    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="pills-top-tab" data-bs-toggle="pill" data-bs-target="#pills-top"
-                    type="button" role="tab" aria-controls="pills-top" aria-selected="true">탑
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pills-jug-tab" data-bs-toggle="pill" data-bs-target="#pills-jug"
-                    type="button" role="tab" aria-controls="pills-jug" aria-selected="false">정글
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pills-mid-tab" data-bs-toggle="pill" data-bs-target="#pills-mid"
-                    type="button" role="tab" aria-controls="pills-mid" aria-selected="false">미드
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pills-adc-tab" data-bs-toggle="pill" data-bs-target="#pills-adc"
-                    type="button" role="tab" aria-controls="pills-adc" aria-selected="false">원딜
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pills-sup-tab" data-bs-toggle="pill" data-bs-target="#pills-sup"
-                    type="button" role="tab" aria-controls="pills-sup" aria-selected="false">서폿
-            </button>
-        </li>
-
-    </ul>
-
-
-    <div class="tab-content" id="pills-tabContent">
-        <div class="tab-pane fade show active" id="pills-top" role="tabpanel" aria-labelledby="pills-top-tab" tabindex="0">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>순위</th>
-                    <th>챔피언</th>
-                    <th>승률</th>
-                    <th>픽률</th>
-                    <th>밴율</th>
-                    <th>카운터</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src="https://opgg-static.akamaized.net/meta/images/lol/champion/Darius.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&amp;v=1668416556212"
-                            width="32" height="32"> 다리우스</img></td>
-                    <td>51.39%</td>
-                    <td>9.32%</td>
-                    <td>27.95%</td>
-                    <td><img
-                            src="https://opgg-static.akamaized.net/meta/images/lol/champion/Heimerdinger.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_48&amp;v=1668416556212"
-                            width="24" height="24">
-                        <img src="https://opgg-static.akamaized.net/meta/images/lol/champion/Zac.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_48&v=1668416556212"
-                             width="24" height="24">
-                        <img src="https://opgg-static.akamaized.net/meta/images/lol/champion/Vayne.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_48&v=1668416556212"
-                             width="24" height="24">
-                    </td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-
-                </tbody>
-            </table>
-        </div>
-        <div class="tab-pane fade" id="pills-jug" role="tabpanel" aria-labelledby="pills-jug-tab" tabindex="0">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>순위</th>
-                    <th>챔피언</th>
-                    <th>승률</th>
-                    <th>픽률</th>
-                    <th>밴율</th>
-                    <th>카운터</th>
-                </tr>
-                </thead>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src="https://opgg-static.akamaized.net/meta/images/lol/champion/Udyr.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668416556212"
-                            width="32" height="32"> 우디르</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src="https://opgg-static.akamaized.net/meta/images/lol/champion/MonkeyKing.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_48&v=1668416556212"
-                            width="24" height="24"</td>
-                    <img
-                            src="https://opgg-static.akamaized.net/meta/images/lol/champion/Gragas.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_48&v=1668416556212"
-                            width="24" height="24"</td>
-                    <img
-                            src="https://opgg-static.akamaized.net/meta/images/lol/champion/Nunu.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_48&v=1668416556212"
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-            </table>
-        </div>
-        <div class="tab-pane fade" id="pills-mid" role="tabpanel" aria-labelledby="pills-mid-tab" tabindex="0">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>순위</th>
-                    <th>챔피언</th>
-                    <th>승률</th>
-                    <th>픽률</th>
-                    <th>밴율</th>
-                    <th>카운터</th>
-                </tr>
-                </thead>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-
-            </table>
-
-
-        </div>
-        <div class="tab-pane fade" id="pills-adc" role="tabpanel" aria-labelledby="pills-adc-tab" tabindex="0">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>순위</th>
-                    <th>챔피언</th>
-                    <th>승률</th>
-                    <th>픽률</th>
-                    <th>밴율</th>
-                    <th>카운터</th>
-                </tr>
-                </thead>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> </img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-
-            </table>
-
-
-        </div>
-        <div class="tab-pane fade" id="pills-sup" role="tabpanel" aria-labelledby="pills-sup-tab" tabindex="0">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>순위</th>
-                    <th>챔피언</th>
-                    <th>승률</th>
-                    <th>픽률</th>
-                    <th>밴율</th>
-                    <th>카운터</th>
-                </tr>
-                </thead>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td><img
-                            src=""
-                            width="32" height="32"> 챔프이름</img></td>
-                    <td>52.15%</td>
-                    <td>5.09%</td>
-                    <td>13.30%</td>
-                    <td><img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                    <img
-                            src=""
-                            width="24" height="24"</td>
-                </tr>
-
-            </table>
-
-
-        </div>
-
-
+    <div class="searching" style="text-align: center; padding-top: 20px;">
+        <input type=text placeholder="검색">
+        <button>검색</button>
     </div>
-
 </div>
-
-
-</div>
-
-</div>
-
 </body>
 </html>
