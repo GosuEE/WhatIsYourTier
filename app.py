@@ -74,7 +74,7 @@ def board_POST():
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.user.find_one({"id": payload['id']})
-        user = user_info['id']
+        user = user_info['name']
         doc = {
             'number': number_receive,
             'title': title_receive,
@@ -155,9 +155,10 @@ def post_show():
             user_info = db.user.find_one({"id": payload['id']})['id']
             number = request.form['num']
             one_post = db.board.find_one({'number': int(number)})
+            user = one_post['id']
             title = one_post['title']
             contents = one_post['contents']
-            return jsonify({'title': title, 'contents': contents, 'user': user_info})
+            return jsonify({'title': title, 'contents': contents, 'user': user})
         except jwt.ExpiredSignatureError:
             return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
         except jwt.exceptions.DecodeError:
@@ -177,11 +178,7 @@ def update():
 
         id = text['id']
         db.board.update_one({"number": number},{'$set':{'title':title, 'contents':contents}})
-
-        if id != db.user.find_one({"id": payload['id']})['id']:
-            return redirect(url_for(f"/post/{number}", msg="본인의 글만 수정 가능합니다."))
-        else:
-             return jsonify({'title': title, 'contents': contents})
+        return jsonify({'title': title, 'contents': contents})
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
     except jwt.exceptions.DecodeError:
@@ -198,9 +195,8 @@ def modify(number):
         title = text['title']
         contents = text['contents']
         id = text['id']
-
         if id != db.user.find_one({"id": payload['id']})['id']:
-            return redirect(url_for(f"/post/{number}", msg="본인의 글만 수정 가능합니다."))
+            return render_template("board.html", num = number, msg = "본인의 글만 수정 가능합니다!")
         else:
             return render_template("modify.html", title=title, contents=contents,number=int(number))
     except jwt.ExpiredSignatureError:
