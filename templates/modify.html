@@ -94,6 +94,18 @@
     </style>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            show_contents({{title}}, {{contents}});
+        });
+
+        function show_contents(title, contents) {
+            console.log(title)
+            console.log(contenents)
+
+            document.getElementById("utitle").innerText = title;
+            document.getElementById("ucontent").innerText = contents;
+        }
+
         function add() {
             console.log('write is called')
 
@@ -129,7 +141,7 @@
     <div class="board_write">
         <div class="write_area">
             <div class="writing">
-                <h4>글을 작성하는 공간입니다.</h4>
+                <h4>글을 수정하는 공간입니다.</h4>
 
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-default" style="width: 100px">제목</span>
@@ -165,12 +177,13 @@
                 </div> -->
 
                 <div class="bt_se">
-                    <button onclick="add()" type="button" class="btn btn-outline-primary">글 작성</button>
+                    <button onclick="add()" type="button" class="btn btn-outline-primary">글 수정</button>
                 </div>
 
             </div>
             <div class="myCook">
                 <button onclick="window.location.href='/board'" type="button" class="btn btn-danger">자유게시판</button>
+                <button onclick="window.location.href='/꿀팁'" type="button" class="btn btn-warning">꿀팁저장소</button>
             </div>
         </div>
     </div>

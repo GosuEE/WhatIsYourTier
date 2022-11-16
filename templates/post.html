@@ -88,24 +88,42 @@
     </style>
 
     <script>
+        var number = {{num}}
         document.addEventListener('DOMContentLoaded', function () {
             show_post({{ num }});
         });
+
+        // function modify() {
+        //     var title = document.getElementById("innerTitle").innerText;
+        //     var contents = document.getElementById("innerContents").innerText;
+
+        //     console.log(title)
+        //     console.log(contents)
+        //     console.log({{ num }})
+
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "/modify",
+        //         data: { title: title, contents: contents, num: {{ num }} },
+        //         success: function (response) {
+        //             window.location.herf='/modify'
+        //         }
+        //     }) 
+        // }
 
         function show_post(num) {
             $.ajax({
                 type: "POST",
                 url: "/post",
-                data: { num : num },
+                data: { num: num },
                 success: function (response) {
-                    console.log('post is success')
                     let contents = response['contents']
                     let title = response['title']
                     let nick = response['user']
 
-                    let temp_title = `<li class="list-group-item">${title}</li>`
+                    let temp_title = `<li class="list-group-item" id="innerTitle">${title}</li>`
                     let temp_nick = `<li class="list-group-item">${nick}</li>`
-                    let temp_text = `<li class="list-group-item" style="overflow-y: scroll">${contents}</li>`
+                    let temp_text = `<li class="list-group-item" style="overflow-y: scroll" id="innerContents">${contents}</li>`
 
                     document.getElementById("title").insertAdjacentHTML('beforeend', temp_title);
                     document.getElementById("nick").insertAdjacentHTML('beforeend', temp_nick);
@@ -125,7 +143,7 @@
             <button onclick=url"https://download.kr.riotgames.com/league" type="button" class="btn btn-primary">Play
                 Game
             </button> -->
-        </div>
+    </div>
     </div>
     <div class="board">
         <div class="card">
@@ -152,7 +170,7 @@
         </div>
         <div class="myCook">
             <button onclick="window.location.href='/board'" type="button" class="btn btn-danger">자유게시판</button>
-            <button onclick="window.location.href='/꿀팁'" type="button" class="btn btn-warning">꿀팁저장소</button>
+        </div>
         </div>
     </div>
 
