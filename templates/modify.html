@@ -99,25 +99,23 @@
         });
 
         function show_contents(title, contents) {
-
             document.getElementById("utitle").innerText = title;
             document.getElementById("ucontent").innerText = contents;
         }
 
         function add() {
-            console.log('write is called')
-
             let contents = document.getElementById("ucontent").value
             let title = document.getElementById("utitle").value
+            let num = {{number}}
             //let nick = document.getElementById("unickname").value
 
             $.ajax({
                 type: "POST",
-                url: "/GNT/write",
-                data: { 'contents_give': contents, 'title_give': title },
+                url: "/GNT/modify",
+                data: { 'contents_give': contents, 'title_give': title, 'num_give':num },
                 success: function (response) {
-                    alert(response["msg"])
-                    window.location.href = '/board'
+                    window.location.replace("/post/{{number}}")
+                    alert('수정 완료')
                 }
             });
         }
@@ -181,7 +179,7 @@
             </div>
             <div class="myCook">
                 <button onclick="window.location.href='/board'" type="button" class="btn btn-danger">자유게시판</button>
-                <button onclick="window.location.href='/꿀팁'" type="button" class="btn btn-warning">꿀팁저장소</button>
+                <button onclick="window.location.href=`/post/{{number}}`" type="button" class="btn btn-warning">돌아가기</button>
             </div>
         </div>
     </div>

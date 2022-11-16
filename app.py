@@ -139,6 +139,8 @@ def post(number):
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.user.find_one({"id": payload['id']})
+        hits = db.board.find_one({"number":number})['hits']
+        db.board.update_one({"number": number},{'$set':{'hits': hits+1}})
         return render_template("post.html", num = number)
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
@@ -161,6 +163,30 @@ def post_show():
         except jwt.exceptions.DecodeError:
             return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
 
+@app.route('/GNT/modify', methods=["POST"])
+def update():
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.user.find_one({"id": payload['id']})['id']
+
+        title = request.form['title_give']
+        contents = request.form['contents_give']
+        number = int(request.form['num_give'])
+        text = db.board.find_one({"number": number})
+
+        id = text['id']
+        db.board.update_one({"number": number},{'$set':{'title':title, 'contents':contents}})
+
+        if id != db.user.find_one({"id": payload['id']})['id']:
+            return redirect(url_for(f"/post/{number}", msg="본인의 글만 수정 가능합니다."))
+        else:
+             return jsonify({'title': title, 'contents': contents})
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
+
 @app.route('/modify/<int:number>', methods=["GET"])
 def modify(number):
     token_receive = request.cookies.get('mytoken')
@@ -171,13 +197,12 @@ def modify(number):
 
         title = text['title']
         contents = text['contents']
-        id = db.user.find_one({"id": payload['id']})['id']
+        id = text['id']
 
         if id != db.user.find_one({"id": payload['id']})['id']:
             return redirect(url_for(f"/post/{number}", msg="본인의 글만 수정 가능합니다."))
         else:
-            print("else")
-            return render_template("modify.html", title=title, contents=contents)
+            return render_template("modify.html", title=title, contents=contents,number=int(number))
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
     except jwt.exceptions.DecodeError:
