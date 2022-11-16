@@ -95,12 +95,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            show_contents({{title}}, {{contents}});
+            show_contents('{{title}}', '{{contents}}');
         });
 
         function show_contents(title, contents) {
-            console.log(title)
-            console.log(contenents)
 
             document.getElementById("utitle").innerText = title;
             document.getElementById("ucontent").innerText = contents;
@@ -145,7 +143,7 @@
 
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-default" style="width: 100px">제목</span>
-                    <input type="text" class="form-control" id="utitle" aria-label="Sizing example input"
+                    <input type="text" value='{{title}}' class="form-control" id="utitle" aria-label="Sizing example input"
                         aria-describedby="inputGroup-sizing-default">
                 </div>
 

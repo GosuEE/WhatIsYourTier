@@ -88,28 +88,27 @@
     </style>
 
     <script>
-        var number = {{num}}
         document.addEventListener('DOMContentLoaded', function () {
             show_post({{ num }});
         });
 
-        // function modify() {
-        //     var title = document.getElementById("innerTitle").innerText;
-        //     var contents = document.getElementById("innerContents").innerText;
+        function modify() {
+            var title = document.getElementById("innerTitle").innerText;
+            var contents = document.getElementById("innerContents").innerText;
 
-        //     console.log(title)
-        //     console.log(contents)
-        //     console.log({{ num }})
+            console.log(title)
+            console.log(contents)
+            console.log({{ num }})
 
-        //     $.ajax({
-        //         type: "POST",
-        //         url: "/modify",
-        //         data: { title: title, contents: contents, num: {{ num }} },
-        //         success: function (response) {
-        //             window.location.herf='/modify'
-        //         }
-        //     }) 
-        // }
+            $.ajax({
+                type: "GET",
+                url: "/modify",
+                data: { },
+                success: function (response) {
+                    window.location.herf='/modify'
+                }
+            }) 
+        }
 
         function show_post(num) {
             $.ajax({
@@ -124,10 +123,13 @@
                     let temp_title = `<li class="list-group-item" id="innerTitle">${title}</li>`
                     let temp_nick = `<li class="list-group-item">${nick}</li>`
                     let temp_text = `<li class="list-group-item" style="overflow-y: scroll" id="innerContents">${contents}</li>`
+                    let temp_button = `<button onclick="window.location.href='/modify/${num}'" type="button" class="btn btn-secondary">글 수정</button>`
 
+                    console.log(document.getElementById("myBytton"))
                     document.getElementById("title").insertAdjacentHTML('beforeend', temp_title);
                     document.getElementById("nick").insertAdjacentHTML('beforeend', temp_nick);
                     document.getElementById("contents").insertAdjacentHTML('beforeend', temp_text);
+                    document.getElementById("myButton").insertAdjacentHTML('beforeend', temp_button);
                 }
             })
         }
@@ -168,7 +170,7 @@
                 </div>
             </ul>
         </div>
-        <div class="myCook">
+        <div class="myCook" id="myButton">
             <button onclick="window.location.href='/board'" type="button" class="btn btn-danger">자유게시판</button>
         </div>
         </div>
@@ -185,5 +187,4 @@
     justify-content: center; -->
 
 </body>
-
 </html>
