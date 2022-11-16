@@ -112,6 +112,12 @@
 
         margin-right: 10px;
     }
+    #pw_cheak {
+        float: left;
+        color: red;
+        display: none;
+    }
+
 
 
     a {
@@ -142,14 +148,29 @@
                         alert('확인 완료! 비밀번호를 변경해 주세요!')
                         return;
                     }
-
-
                 }
                     alert("일치하는 정보가 없습니다.")
                     target.disabled = true;
 
             }
         })
+    }
+    function cheak_pw() {
+        var pw = $('#user_pw').val()
+        var num = pw.search(/[0-9]/g);
+        var eng = pw.search(/[a-z]/ig);
+        var spe = pw.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
+        const target = document.getElementById('change_pw');
+        console.log(pw)
+        if (pw.length < 8 || pw.length > 20 || pw.search(/\s/) != -1 || num < 0 || eng < 0 || spe < 0) {
+            $('#pw_cheak').show();
+            target.disabled = true;
+            return false;
+        } else {
+            $('#pw_cheak').hide();
+            target.disabled = false;
+            return true;
+        }
     }
 
     function change_pw() {

@@ -241,7 +241,7 @@
         var num = pw.search(/[0-9]/g);
         var eng = pw.search(/[a-z]/ig);
         var spe = pw.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
-        const target = document.getElementById('target_btn');
+        const target = document.getElementById('register_button');
         console.log(pw)
         if (pw.length < 8 || pw.length > 20 || pw.search(/\s/) != -1 || num < 0 || eng < 0 || spe < 0) {
             $('#pw_cheak').show();
@@ -257,13 +257,16 @@
     function check_mail() {
         var str = $('#user_email').val()
         var reg_email = /^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/;
+        const target = document.getElementById('register_button');
         if (!reg_email.test(str)) {
             console.log(false)
+            target.disabled = true;
             $('#mail_cheak').show();
             return false;
         } else {
             console.log(true)
             $('#mail_cheak').hide();
+            target.disabled = false;
             return true;
         }
     }
@@ -318,7 +321,7 @@
     </div>
     <p class="space">　</p>
 
-    <button onclick="register()" style='cursor:pointer'>가입하기</button>
+    <button onclick="register()" id ="register_button" style='cursor:pointer'>가입하기</button>
 
 </div>
 
