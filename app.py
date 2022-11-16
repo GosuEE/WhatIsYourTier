@@ -216,7 +216,12 @@ def write_get():
         return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
-    
+
+@app.route("/board/search", methods=["GET"])
+def board_search():
+    board_list = list(db.board.find({}, {'_id': False}))
+    return jsonify({'result': 'success', 'all_board': board_list})
+
 @app.route('/search_id')
 def search_id():
     return render_template('search_id.html')

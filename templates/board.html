@@ -1,96 +1,96 @@
 <title>자유게시판</title>
 <style>
-* {
-            margin: 0;
-            padding: 0;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+    }
 
-        .mypic {
-            width: 100%;
-            height: 300px;
-            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://www.leagueoflegends.co.kr/upload/EditorImages/20160724175134_8QXtFDWe.jpg');
-            background-position: center 22%;
-            background-size: cover;
+    .mypic {
+        width: 100%;
+        height: 300px;
+        background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://www.leagueoflegends.co.kr/upload/EditorImages/20160724175134_8QXtFDWe.jpg');
+        background-position: center 22%;
+        background-size: cover;
 
-            color: white;
+        color: white;
 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 
-      table {
-            border-collapse: collapse;
-        }
+    table {
+        border-collapse: collapse;
+    }
 
-        caption {
-            display: none;
-        }
+    caption {
+        display: none;
+    }
 
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
 
-        .btn {
-            float: right;
-            padding-top: 10px;
-            padding-right: 20px;
-        }
+    .btn {
+        float: right;
+        padding-top: 10px;
+        padding-right: 20px;
+    }
 
-        .board_list_wrap {
-            padding-top: 40px;
-            padding-right: 20px;
-            padding-left: 20px;
-        }
+    .board_list_wrap {
+        padding-top: 40px;
+        padding-right: 20px;
+        padding-left: 20px;
+    }
 
-        .board_list {
-            width: 100%;
-            border-top: 2px solid black;
-        }
+    .board_list {
+        width: 100%;
+        border-top: 2px solid black;
+    }
 
-        .board_list tr {
-            border-bottom: 1px solid #ccc
-        }
+    .board_list tr {
+        border-bottom: 1px solid #ccc
+    }
 
-        .board_list th,
-        .board_list td {
-            padding: 10px;
-            font-size: 14px;
-        }
+    .board_list th,
+    .board_list td {
+        padding: 10px;
+        font-size: 14px;
+    }
 
-        .board_list td {
-            text-align: center;
-        }
+    .board_list td {
+        text-align: center;
+    }
 
-        .board_list .title{
-            text-align: left;
-        }
+    .board_list .title {
+        text-align: left;
+    }
 
-        .board_list .title:hover {
-            text-decoration: underline;
-        }
+    .board_list .title:hover {
+        text-decoration: underline;
+    }
 
-        .board_list_wrap .paging {
-            margin-top: 15px;
-            font-size: 0px;
-            text-align: center;
-        }
+    .board_list_wrap .paging {
+        margin-top: 15px;
+        font-size: 0px;
+        text-align: center;
+    }
 
-        .board_list_wrap .paging a {
-            display: inline-block;
-            margin-left: 10px;
-            padding: 10px 13px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            font-size: 14px;
-            background-color: white;
-        }
+    .board_list_wrap .paging a {
+        display: inline-block;
+        margin-left: 10px;
+        padding: 10px 13px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 14px;
+        background-color: white;
+    }
 
-        .board_list_wrap .paging a:first-child {
-            margin-left: 0px;
-        }
+    .board_list_wrap .paging a:first-child {
+        margin-left: 0px;
+    }
 </style>
 <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
 <script src="path/jquery-3.6.0.min.js"></script>
@@ -138,6 +138,48 @@
         });
     }
 
+    function board_search() {
+        let text = $('#input_search').val()
+        console.log(text)
+        $('#board_content_list').empty()
+        $.ajax({
+            type: 'GET',
+            url: '/board/search',
+            data: {},
+            success: function (response) {
+                console.log("성공")
+
+                let rows = response['all_board']
+                for (let i = 0; i < rows.length; i++) {
+                    let number = rows[i]['number']
+                    let title = rows[i]['title']
+                    let id = rows[i]['id']
+                    let date = rows[i]['date']
+                    let hits = rows[i]['hits']
+
+                    let search = title.includes(text)
+                    console.log(search)
+
+                    if (search == true) {
+                        let temp_html = `<tr>
+                                        <td>${number}</td>
+                                        <td class="title">
+                                            <a href="/post/${number}">${title}</a>
+                                        </td>
+                                        <td>${id}</td>
+                                        <td>${date}</td>
+                                        <td>${hits}</td>
+                                    </tr>`
+
+                        $('#board_content_list').append(temp_html)
+                    } else {
+                        continue
+                    }
+                }
+            }
+        });
+    }
+
 </script>
 </head>
 
@@ -163,18 +205,19 @@
                 </tr>
             </thead>
             <tbody id="board_content_list">
-                
+
             </tbody>
         </table>
         <div class="paging">
             <a href="#" onclick="location.href='여기 url 넣기!'">
                 < 이전</a>
                     <a href="#" onclick="location.href='여기 url 넣기!'">다음 ></a>
+        <div style="text-align: center; padding-top: 20px;">
+            <input type=text id="input_search" placeholder="검색"
+                style="padding-right: 70px; padding-top: 4px; padding-bottom: 4px;">
+            <button onclick = board_search() style="background-color: mediumseagreen; color: white; padding: 4px;">검색</button>
         </div>
-        <div class="searching" style="text-align: center; padding-top: 20px;">
-            <input type=text placeholder="검색">
-            <button>검색</button>
-        </div>
+
     </div>
 </body>
 
