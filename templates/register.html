@@ -54,9 +54,11 @@
         width: 150px;
         height: 40px;
     }
-    .space{
+
+    .space {
         float: left;
     }
+
     .name_cheak {
         float: right;
         width: 150px;
@@ -151,7 +153,8 @@
         color: red;
         display: none;
     }
-    #mail_cheak{
+
+    #mail_cheak {
         float: left;
         display: none;
         color: red;
@@ -163,7 +166,6 @@
 </style>
 <script>
     function register() {
-        console.log(11)
         $.ajax({
             type: "POST",
             url: "/register",
@@ -243,7 +245,7 @@
         console.log(pw)
         if (pw.length < 8 || pw.length > 20 || pw.search(/\s/) != -1 || num < 0 || eng < 0 || spe < 0) {
             $('#pw_cheak').show();
-             target.disabled = true;
+            target.disabled = true;
             return false;
         } else {
             $('#pw_cheak').hide();
@@ -251,19 +253,19 @@
             return true;
         }
     }
+
     function check_mail() {
         var str = $('#user_email').val()
         var reg_email = /^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/;
-     if(!reg_email.test(str)) {
-         console.log(false)
-         $('#mail_cheak').show();
-          return false;
-     }
-     else {
-         console.log(true)
-         $('#mail_cheak').hide();
-          return true;
-     }
+        if (!reg_email.test(str)) {
+            console.log(false)
+            $('#mail_cheak').show();
+            return false;
+        } else {
+            console.log(true)
+            $('#mail_cheak').hide();
+            return true;
+        }
     }
 
 
@@ -304,7 +306,7 @@
         <button onclick="name_cheak()" class="name_cheak">중복 확인</button>
     </div>
     <div class="input-box">
-        <input id="user_email" type="text" name="user_email" placeholder="이메일" oninput= "check_mail()">
+        <input id="user_email" type="text" name="user_email" placeholder="이메일" oninput="check_mail()">
         <label for="user_email">이메일</label>
         <p id="mail_cheak">이메일 형식이 올바르지 않습니다.</p>
     </div>

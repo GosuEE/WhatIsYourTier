@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
     <title>Document</title>
 </head>
 <script>
@@ -19,10 +22,16 @@
             }
         })
     }
+    function logout(){
+         $.removeCookie('mytoken')
+         alert('쿠키를 지워 로그아웃 했습니다')
+        window.location.href = '/'
+    }
+
 </script>
 <body>
     <button><a a href="/login">로그인</a></button>
     <button onclick="name_cheak()">확인용</button>
-    <button><a >로그아웃</a></button>
+    <button  onclick="logout()"><a >로그아웃</a></button>
 </body>
 </html>
