@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -44,7 +45,11 @@
 
         .mybtn {
             margin-top: 5px;
-            width: 20%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: ;
 
         }
 
@@ -92,29 +97,398 @@
         .mybox > li > h2.done {
             text-decoration: line-through
         }
-    </style>
 
+
+        .mybx {
+            width: 95%;
+            max-width: 700px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px 0px lightblue;
+            margin: 20px auto;
+        }
+
+        .mybucket {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mybucket > input {
+            width: 70%;
+        }
+
+        .mybx > li {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 10px;
+            min-height: 48px;
+        }
+
+        .mybx > li > h2 {
+            width: 100px;
+            max-width: 75%;
+            font-size: 20px;
+            font-weight: 500;
+            margin-right: auto;
+            margin-bottom: 0px;
+        }
+
+        .mybx > li > h2.done {
+            text-decoration: line-through
+        }
+
+        .mybx > li > button {
+            width: 150px;
+            margin-left: 20px;
+        }
+        .li{
+            display: flex;
+            flex-direction: row;
+            text-align: center;
+
+        }
+        .li>h2{
+            width: 100px;
+            margin: auto;
+        }
+        #user_info {
+            width: 60%;
+            height: 700px;
+            border: groove;
+            margin-left: 20%;
+            padding-left: 3%;
+            padding-top: 1%;
+            background-color: #eeeeee;
+            display: none;
+        }
+
+        .UserName {
+            font-size: 35px;
+        }
+
+        .rank {
+            margin-top: 50px;
+
+            width: 500px;
+            height: 200px;
+            border: solid 1px;
+            padding: 5px 5px 5px 5px;
+            background-color: white;
+        }
+
+        .rank_font {
+            font-size: 25px;
+            /*padding-top: 15px;*/
+            padding-left: 195px;
+            position: absolute;
+        }
+
+        .tier_box {
+            margin-top: 50px;
+            width: 330px;
+            height: 100px;
+
+        }
+
+        .tier {
+
+            font-size: 20px;
+            padding-left: 190px;
+            padding-top: 10px;
+        }
+
+        .point {
+            padding-left: 230px;
+            padding-top: 5px;
+        }
+
+        .img {
+            margin-top: 20px;
+            position: absolute;
+            width: 150px;
+            margin-left: 14px;
+        }
+
+        .record {
+            font-size: px;
+            width: 150px;
+            height: 180px;
+            /*background-color: skyblue;*/
+            float: right;
+            display: flex;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .record_font {
+            padding-top: 50%;
+        }
+
+        .record_list {
+            float: right;
+            width: 40%;
+            height: 80%;
+            margin-right: 5%;
+
+            background-color: white;
+            table-layout: fixed;
+        }
+
+        .champion-box {
+            /*background-color: red;*/
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: center;
+            text-align: center;
+
+        }
+
+        .season_title {
+            font-size: 25px;
+            display: flex;
+            justify-content: center;
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: solid 1px;
+        }
+
+        .info {
+            margin-right: 20%;
+        }
+
+        .kda {
+            margin-right: 20%;
+        }
+        .mylol {
+            width: 95%;
+            max-width: 700px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px 0px cadetblue;
+            margin: 20px auto;
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+        }
+        .mylol > button {
+            width: auto;
+            height: 40px;
+            margin-left: 5px;
+
+        }
+        .mylol > input {
+            width: 400px;
+            height: 40px;
+            margin-left: 7px;
+        }
+        .good {
+            font-size: 25px;
+            margin: auto;
+        }
+    </style>
+    <script>
+        function search() {
+            $('#user_info').show();
+            alert("검색 시작")
+            $('#user_info').empty()
+            //---------------닉네임 입력------------------
+            $.ajax({
+                type: "POST",
+                url: "/search",
+                data: {nicname_give: $('#name_search').val()},
+                success: function (response) {
+                    alert(response['msg'])
+                }
+            })
+            //---------------값 불러오기-------------------
+            $.ajax({
+                type: 'GET',
+                url: '/user_info',
+                data: {},
+                success: function (response) {
+                    let soloRank = response['soloRank']
+                    let freeRank = response['freeRank']
+                    let champion_list = response['champion']
+
+                    console.log(soloRank)
+                    console.log(freeRank)
+                    console.log(champion_list)
+                    let name = soloRank[0]['name']
+                    console.log(name)
+                    let temp_html = `<p class="UserName">${name}</p>`
+                    $('#user_info').append(temp_html)
+                    temp_html = `<div id="record_list" class="record_list">
+                                       <p class="season_title">Season 12 Most Champion</p>
+                                 </div>`
+                    $('#user_info').append(temp_html)
+                    //championlist=====================================================
+                    let cnt = 0;
+                    for (let i = 1; i < champion_list.length; i++) {
+                        if(cnt == 5){
+                            break
+                        }
+                        let champion = champion_list[i]['champion']
+                        let cs = champion_list[i]['cs']
+                        let kda = champion_list[i]['kda']
+                        let kill = champion_list[i]['kill']
+                        let death = champion_list[i]['death']
+                        let assist = champion_list[i]['assist']
+                        let odd = champion_list[i]['Odds'] //승률
+                        let cntgame = champion_list[i]['cntgame']
+                        cnt +=1
+                        let champ_temp_html = `<div class="champion-box">
+                                                        <div class="info">
+                                                            <div class="name">
+                                                                <a>${champion}</a>
+                                                            </div>
+                                                            <div class="cs">CS ${cs}</div>
+                                                        </div>
+                                                        <div class="kda">
+                                                            <div class="" style="position: relative;">
+                                                                <div class="css-954ezp e1g7spwk1">${kda} 평점</div>
+                                                            </div>
+                                                            <div class="detail">${kill} / ${death} / ${assist}</div>
+                                                        </div>
+                                                        <div class="played">
+                                                            <div class="" style="position: relative;">
+                                                                <div class="css-1nuoroq e1g7spwk0">${odd}</div>
+                                                            </div>
+                                                            <div class="count">${cntgame} 게임</div>
+                                                        </div>
+                                                    </div>`
+                        $('#record_list').append(champ_temp_html)
+                    }
+                    //================for문 종료
+                    //=======솔로랭크 append
+                    //solorank ======================================================
+                    let solo_ranking_num = soloRank[0]['ranking_num']
+                    let solo_ranking_per = soloRank[0]['ranking_per']
+                    let solo_league = soloRank[0]['league']
+                    let solo_tier = soloRank[0]['tier']
+                    let solo_point = soloRank[0]['point']
+                    let solo_record = soloRank[0]['record']
+                    let solo_rankimg = soloRank[0]['rankimg']
+                    temp_html = `<div class="rank">
+                                        <p class="rank_font">솔로 랭크</p>
+                                        <div class="record">
+                                            <div class="record_font">
+                                                <p>${solo_record}</p>
+                                            </div>
+                                        </div>
+                                        <img class="img"
+                                             src="https://opgg-static.akamaized.net/images/medals_new/diamond.png?image=q_auto,f_webp,w_144&v=1668582433964">
+                                        <div class="tier_box">
+                                            <p class="tier">${solo_tier}</p>
+                                            <p class="point">${solo_point} LP</p>
+                                        </div>
+                                    </div>
+                                </div>`
+                    $('#user_info').append(temp_html)
+                    //freerank =====================================================
+                    let free_ranking_num = freeRank[0]['ranking_num']
+                    let free_ranking_per = freeRank[0]['ranking_per']
+                    let free_league = freeRank[0]['league']
+                    let free_tier = freeRank[0]['tier']
+                    let free_point = freeRank[0]['point']
+                    let free_record = freeRank[0]['record']
+                    let free_rankimg = freeRank[0]['rankimg']
+                    temp_html = `<div class="rank">
+                                        <p class="rank_font">자유 랭크</p>
+                                        <div class="record">
+                                            <div class="record_font">
+                                                <p>${free_record}</p>
+                                            </div>
+                                        </div>
+                                        <img class="img"
+                                             src="https://opgg-static.akamaized.net/images/medals_new/platinum.png?image=q_auto,f_webp,w_144&v=1668582433769">
+                                        <div class="tier_box">
+                                            <p class="tier">${free_tier}</p>
+                                            <p class="point">${free_point} LP</p>
+                                        </div>
+                                    </div>
+                                </div>`
+                    $('#user_info').append(temp_html)
+                }
+            });
+        }
+    </script>
 </head>
 <body>
+
 <div class="mypic">
     <h1>League Of Legends: GNT</h1>
     <h7>GNT implies "So what is your tier?" in Korean</h7>
     <button onclick="window.location.href='/로그인'" type="button" class="btn btn-success">Sign In Here</button>
     <div class="mybtn">
-        <button onclick=url"https://download.kr.riotgames.com/league" type="button" class="btn btn-primary">Play Game
+        <button onclick="window.open=('https://www.leagueoflegends.com/ko-kr/')" type="button" class="btn btn-primary">Play Game
         </button>
     </div>
-
 </div>
 
 <div class="myCook">
-    <button onclick="window.location.href='/board'" type="button" class="btn btn-danger">자유게시판</button>
+    <button onclick="window.location.href='/게시판'" type="button" class="btn btn-danger">자유게시판</button>
     <button onclick="window.location.href='/꿀팁'" type="button" class="btn btn-warning">꿀팁저장소</button>
 </div>
 
-<div class="card text">
+        <div class="mylol">
+        <h2 class="good">SEARCH</h2>
+        <input id="name_search" type="text" name="name_search" placeholder="Type Your Nickname">
+        <button id="search" onclick="search()" type="button" class="btn btn-outline-success">CLICK</button>
+        </div>
+        <div class="card text">
+            <div id="user_info">
+                <p class="UserName">User Name</p>
+                <p>레더 랭킹 3,241,134위 (상위 74.48%)</p>
+                <div class="record_list">
+                    <p class="season_title">Season 12 Most Champion</p>
+                    <div class="champion-box">
+                        <div class="info">
+                            <div class="name">
+                                <a>다이애나</a>
+                            </div>
+                            <div class="cs">CS 175.3 (6.1)</div>
+                        </div>
+                        <div class="kda">
+                            <div class="" style="position: relative;">
+                                <div class="css-954ezp e1g7spwk1">2.61:1 평점</div>
+                            </div>
+                            <div class="detail">8.6 / 6.4 / 8.0</div>
+                        </div>
+                        <div class="played">
+                            <div class="" style="position: relative;">
+                                <div class="css-1nuoroq e1g7spwk0">58%</div>
+                            </div>
+                            <div class="count">109 게임</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="rank">
+                    <p class="rank_font">솔로 랭크</p>
+                    <div class="record">
+                        <div class="record_font">
+                            <p>872전 455승 417패</p>
+                            <p>52.18%</p>
+                        </div>
+                    </div>
+                    <img class="img"
+                         src="https://opgg-static.akamaized.net/images/medals_new/diamond.png?image=q_auto,f_webp,w_144&v=1668582433964">
+                    <div class="tier_box">
+                        <p class="tier">Silver 4</p>
+                        <p class="point">10 LP</p>
+                    </div>
+                </div>
+            </div>
+</div>
 
-    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+
+</div>
+
+<div class="card text">
+<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="pills-top-tab" data-bs-toggle="pill" data-bs-target="#pills-top"
                     type="button" role="tab" aria-controls="pills-top" aria-selected="true">탑
