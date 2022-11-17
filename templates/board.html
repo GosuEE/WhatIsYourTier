@@ -95,14 +95,13 @@
 <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
 <script src="path/jquery-3.6.0.min.js"></script>
 <script>
+
     function write_click() {
         window.location.href = '/write'
     }
-
     function main() {
         window.location.href = '/'
     }
-
     $(document).ready(function () {
         board_list();
     });
@@ -114,6 +113,7 @@
             data: {},
             success: function (response) {
                 console.log("성공")
+
                 let rows = response['all_board']
                 for (let i = 0; i < rows.length; i++) {
                     let number = rows[i]['number']
@@ -161,6 +161,7 @@
                     console.log(search)
 
                     if (search == true) {
+
                         let temp_html = `<tr>
                                         <td>${number}</td>
                                         <td class="title">
@@ -172,6 +173,7 @@
                                     </tr>`
 
                         $('#board_content_list').append(temp_html)
+
                     } else {
                         continue
                     }
@@ -209,12 +211,9 @@
             </tbody>
         </table>
         <div class="paging">
-            <a href="#" onclick="location.href='여기 url 넣기!'">
-                < 이전</a>
-                    <a href="#" onclick="location.href='여기 url 넣기!'">다음 ></a>
+
         <div style="text-align: center; padding-top: 20px;">
-            <input type=text id="input_search" placeholder="검색"
-                style="padding-right: 70px; padding-top: 4px; padding-bottom: 4px;">
+            <input type=text id="input_search" placeholder="검색" style="padding-right: 70px; padding-top: 4px; padding-bottom: 4px;">
             <button onclick = board_search() style="background-color: mediumseagreen; color: white; padding: 4px;">검색</button>
         </div>
 
