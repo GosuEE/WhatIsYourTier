@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 import requests as requests
 from flask import Flask, render_template, jsonify, request, session, redirect, url_for
+from selenium.webdriver.chrome.options import Options
+
+import jwt
+import datetime
+import hashlib
 
 app = Flask(__name__)
 from bs4 import BeautifulSoup
@@ -9,6 +14,7 @@ import certifi
 from urllib.request import urlopen
 from html_table_parser import parser_functions as parser
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 
 ca = certifi.where()
 
@@ -76,6 +82,7 @@ def board_POST():
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.user.find_one({"id": payload['id']})
         user = user_info['name']
+        id = user_info['id']
         doc = {
             'number': number_receive,
             'title': title_receive,
@@ -83,7 +90,8 @@ def board_POST():
             # 'name': name_receive,
             'date': date_receive,
             # 'boardurl': boardurl_reveive
-            'id' : user,
+            'name' : user,
+            'id' : id,
             'hits': hits
         }
         db.board.insert_one(doc)
@@ -166,9 +174,10 @@ def modify(number):
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.user.find_one({"id": payload['id']})['id']
         text = db.board.find_one({"number": int(number)})
-
         title = text['title']
         contents = text['contents']
+        print(contents)
+
         id = text['id']
         if id != db.user.find_one({"id": payload['id']})['id']:
             return render_template("board.html", num = number, msg = "본인의 글만 수정 가능합니다!")
@@ -363,9 +372,19 @@ def search():
     #
     #
 
-    options = webdriver.ChromeOptions()
-    options.add_argument("headless")
-    driver = webdriver.Chrome(options=options)
+    # options = webdriver.ChromeOptions()
+    chrome_options = Options()
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
+    chrome_options.add_argument("--headless")
+
+    # chrome_options = Options()
+    # chrome_options.set_headless()
+
+    driver = webdriver.Chrome(ChromeDriverManager().install(),chrome_options=chrome_options)
+    print(ChromeDriverManager().install())
     # ---------------------------------------------------------------------------------------------
 
     driver.get(url)
@@ -415,6 +434,7 @@ def search():
         'rankimg': rankimg
     }
     db.freeRank.insert_one(free_doc)
+    driver.quit()
     return jsonify({'msg': '입력 완료!'})
 
 

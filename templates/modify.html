@@ -94,31 +94,41 @@
     </style>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            show_contents('{{title}}', '{{contents}}');
-        });
+        let num = {{ number }}
+        window.onload = function () {
+            document.getElementById("utitle").innerText = "{{title}}"
 
+            temp_html = `
+                <div id= "content" class="input-group" style="white-space: pre-wrap;">
+                    <span class="input-group-text" style="width: 100px">내용</span>
+                    <textarea id="ucontent" class="form-control" aria-label="With textarea" style="height: 350px">{{contents}}</textarea>
+                </div>
+                <div class="bt_se">
+                    <button onclick="add()" type="button" class="btn btn-outline-primary">글 수정</button>
+                </div>`
+            document.getElementById("temp").insertAdjacentHTML('beforeend', temp_html);
+        }
+        //&#10;&#10;
         function show_contents(title, contents) {
-            document.getElementById("utitle").innerText = title;
-            document.getElementById("ucontent").innerText = contents;
+
         }
 
         function add() {
             let contents = document.getElementById("ucontent").value
+            console.log(contents)
             let title = document.getElementById("utitle").value
-            let num = {{number}}
-            //let nick = document.getElementById("unickname").value
-
+            console.log(title)
             $.ajax({
                 type: "POST",
                 url: "/GNT/modify",
-                data: { 'contents_give': contents, 'title_give': title, 'num_give':num },
+                data: { 'contents_give': contents, 'title_give': title, 'num_give': num },
                 success: function (response) {
                     window.location.replace("/post/{{number}}")
                     alert('수정 완료')
                 }
             });
         }
+
     </script>
 </head>
 
@@ -136,13 +146,13 @@
 
     <div class="board_write">
         <div class="write_area">
-            <div class="writing">
+            <div class="writing" id = "temp">
                 <h4>글을 수정하는 공간입니다.</h4>
 
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-default" style="width: 100px">제목</span>
-                    <input type="text" value='{{title}}' class="form-control" id="utitle" aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-default">
+                    <input type="text" value='{{title}}' class="form-control" id="utitle"
+                        aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
                 </div>
 
                 <!-- <div class="input-group mb-3">
@@ -150,12 +160,7 @@
                     <input type="text" class="form-control" id="unickname" placeholder="" aria-label="Username"
                         aria-describedby="basic-addon1">
                 </div> -->
-
-                <div class="input-group">
-                    <span class="input-group-text" style="width: 100px">내용</span>
-                    <textarea class="form-control" aria-label="With textarea" id="ucontent"
-                        style="height: 350px;"></textarea>
-                </div>
+                
 
                 <!-- <div id="in_title">
                     <textarea name="title" id="utitle" rows="1" cols="55" placeholder="제목" maxlength="100"
@@ -171,15 +176,11 @@
                 <div id="in_content">
                     <textarea name="content" id="ucontent" placeholder="내용" required></textarea>
                 </div> -->
-
-                <div class="bt_se">
-                    <button onclick="add()" type="button" class="btn btn-outline-primary">글 수정</button>
-                </div>
-
             </div>
             <div class="myCook">
                 <button onclick="window.location.href='/board'" type="button" class="btn btn-danger">자유게시판</button>
-                <button onclick="window.location.href=`/post/{{number}}`" type="button" class="btn btn-warning">돌아가기</button>
+                <button onclick="window.location.href=`/post/{{number}}`" type="button"
+                    class="btn btn-warning">돌아가기</button>
             </div>
         </div>
     </div>

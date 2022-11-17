@@ -117,6 +117,9 @@
                 data: { num: num },
                 success: function (response) {
                     let contents = response['contents']
+                    console.log(contents)
+                    contents = contents.replace(/(\n|\r\n)/g, '<br>')
+                    console.log(contents)
                     let title = response['title']
                     let nick = response['user']
 

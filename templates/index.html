@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
     <title>WhatIsYourTier</title>
@@ -21,6 +22,15 @@
         * {
             font-family: 'Noto Serif KR', sans-serif;
         }
+
+        /*.signin_button {*/
+        /*    display: none;*/
+        /*}*/
+
+        /*.logout_button {*/
+        /*    display: none;*/
+        /*}*/
+
 
         .mypic {
             width: 100%;
@@ -49,7 +59,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: ;
+            /*width: ;*/
 
         }
 
@@ -145,16 +155,19 @@
             width: 150px;
             margin-left: 20px;
         }
-        .li{
+
+        .li {
             display: flex;
             flex-direction: row;
             text-align: center;
 
         }
-        .li>h2{
+
+        .li > h2 {
             width: 100px;
             margin: auto;
         }
+
         #user_info {
             width: 60%;
             height: 700px;
@@ -263,6 +276,7 @@
         .kda {
             margin-right: 20%;
         }
+
         .mylol {
             width: 95%;
             max-width: 700px;
@@ -274,37 +288,58 @@
             align-items: center;
             justify-content: center;
         }
+
         .mylol > button {
             width: auto;
             height: 40px;
             margin-left: 5px;
 
         }
+
         .mylol > input {
             width: 400px;
             height: 40px;
             margin-left: 7px;
         }
+
         .good {
             font-size: 25px;
             margin: auto;
         }
     </style>
     <script>
-        function search() {
-            $('#user_info').show();
-            alert("검색 시작")
-            $('#user_info').empty()
-            //---------------닉네임 입력------------------
+        $(document).ready(function () {
+            cookies_cheak();
+            $("#signin_button").hide();
+            $("#logout_button").hide();
+        });
+
+        function cookies_cheak() {
             $.ajax({
-                type: "POST",
-                url: "/search",
-                data: {nicname_give: $('#name_search').val()},
+                type: 'GET',
+                url: '/cookies_cheak',
+                data: {},
                 success: function (response) {
-                    alert(response['msg'])
+                    let cookies_cheak = response['cookies_cheak']
+
+                    console.log(cookies_cheak)
+
+                    if (cookies_cheak == 0) {
+                        $("#signin_button").show();
+                    } else {
+                        $("#logout_button").show();
+                    }
                 }
             })
-            //---------------값 불러오기-------------------
+        }
+
+        function logout() {
+            $.removeCookie('mytoken')
+            alert('쿠키를 지워 로그아웃 했습니다')
+            window.location.href = '/'
+        }
+        function stemp(){
+            $('#user_info').empty()
             $.ajax({
                 type: 'GET',
                 url: '/user_info',
@@ -313,7 +348,6 @@
                     let soloRank = response['soloRank']
                     let freeRank = response['freeRank']
                     let champion_list = response['champion']
-
                     console.log(soloRank)
                     console.log(freeRank)
                     console.log(champion_list)
@@ -328,7 +362,7 @@
                     //championlist=====================================================
                     let cnt = 0;
                     for (let i = 1; i < champion_list.length; i++) {
-                        if(cnt == 5){
+                        if (cnt == 5) {
                             break
                         }
                         let champion = champion_list[i]['champion']
@@ -339,7 +373,7 @@
                         let assist = champion_list[i]['assist']
                         let odd = champion_list[i]['Odds'] //승률
                         let cntgame = champion_list[i]['cntgame']
-                        cnt +=1
+                        cnt += 1
                         let champ_temp_html = `<div class="champion-box">
                                                         <div class="info">
                                                             <div class="name">
@@ -361,9 +395,11 @@
                                                         </div>
                                                     </div>`
                         $('#record_list').append(champ_temp_html)
+
                     }
                     //================for문 종료
                     //=======솔로랭크 append
+
                     //solorank ======================================================
                     let solo_ranking_num = soloRank[0]['ranking_num']
                     let solo_ranking_per = soloRank[0]['ranking_per']
@@ -415,6 +451,25 @@
                 }
             });
         }
+
+        function search() {
+            $('#user_info').show();
+            alert("검색 시작")
+            $('#user_info').empty()
+            //---------------닉네임 입력------------------
+            $.ajax({
+                type: "POST",
+                url: "/search",
+                data: {nicname_give: $('#name_search').val()},
+                success: function (response) {
+                    alert(response['msg'])
+                }
+
+            })
+
+            //---------------값 불러오기-------------------
+
+        }
     </script>
 </head>
 <body>
@@ -422,73 +477,78 @@
 <div class="mypic">
     <h1>League Of Legends: GNT</h1>
     <h7>GNT implies "So what is your tier?" in Korean</h7>
-    <button onclick="window.location.href='/로그인'" type="button" class="btn btn-success">Sign In Here</button>
+    <button onclick="window.location.href='/login'" id="signin_button" type="button" class="signin_button">Sign In
+        Here
+    </button>
+    <button onclick="logout()" type="button" id="logout_button" class="logout_button">logout</button>
     <div class="mybtn">
-        <button onclick="window.open=('https://www.leagueoflegends.com/ko-kr/')" type="button" class="btn btn-primary">Play Game
+        <button onclick="window.open('https://www.leagueoflegends.com/ko-kr/')" type="button" class="btn btn-primary">
+            Play Game
         </button>
     </div>
 </div>
 
 <div class="myCook">
-    <button onclick="window.location.href='/게시판'" type="button" class="btn btn-danger">자유게시판</button>
+    <button onclick="window.location.href='/board'" type="button" class="btn btn-danger">자유게시판</button>
     <button onclick="window.location.href='/꿀팁'" type="button" class="btn btn-warning">꿀팁저장소</button>
 </div>
 
-        <div class="mylol">
-        <h2 class="good">SEARCH</h2>
-        <input id="name_search" type="text" name="name_search" placeholder="Type Your Nickname">
-        <button id="search" onclick="search()" type="button" class="btn btn-outline-success">CLICK</button>
-        </div>
-        <div class="card text">
-            <div id="user_info">
-                <p class="UserName">User Name</p>
-                <p>레더 랭킹 3,241,134위 (상위 74.48%)</p>
-                <div class="record_list">
-                    <p class="season_title">Season 12 Most Champion</p>
-                    <div class="champion-box">
-                        <div class="info">
-                            <div class="name">
-                                <a>다이애나</a>
-                            </div>
-                            <div class="cs">CS 175.3 (6.1)</div>
-                        </div>
-                        <div class="kda">
-                            <div class="" style="position: relative;">
-                                <div class="css-954ezp e1g7spwk1">2.61:1 평점</div>
-                            </div>
-                            <div class="detail">8.6 / 6.4 / 8.0</div>
-                        </div>
-                        <div class="played">
-                            <div class="" style="position: relative;">
-                                <div class="css-1nuoroq e1g7spwk0">58%</div>
-                            </div>
-                            <div class="count">109 게임</div>
-                        </div>
+<div class="mylol">
+    <h2 class="good">SEARCH</h2>
+    <input id="name_search" type="text" name="name_search" placeholder="Type Your Nickname">
+    <button id="search" onclick="search()" type="button" class="btn btn-outline-success">CLICK</button>
+    <button id="stemp" onclick="stemp()" type="button" class="btn btn-outline-success">STEMP</button>
+</div>
+<div class="card text">
+    <div id="user_info">
+        <p class="UserName">User Name</p>
+        <p>레더 랭킹 3,241,134위 (상위 74.48%)</p>
+        <div class="record_list">
+            <p class="season_title">Season 12 Most Champion</p>
+            <div class="champion-box">
+                <div class="info">
+                    <div class="name">
+                        <a>다이애나</a>
                     </div>
+                    <div class="cs">CS 175.3 (6.1)</div>
                 </div>
-                <div class="rank">
-                    <p class="rank_font">솔로 랭크</p>
-                    <div class="record">
-                        <div class="record_font">
-                            <p>872전 455승 417패</p>
-                            <p>52.18%</p>
-                        </div>
+                <div class="kda">
+                    <div class="" style="position: relative;">
+                        <div class="css-954ezp e1g7spwk1">2.61:1 평점</div>
                     </div>
-                    <img class="img"
-                         src="https://opgg-static.akamaized.net/images/medals_new/diamond.png?image=q_auto,f_webp,w_144&v=1668582433964">
-                    <div class="tier_box">
-                        <p class="tier">Silver 4</p>
-                        <p class="point">10 LP</p>
+                    <div class="detail">8.6 / 6.4 / 8.0</div>
+                </div>
+                <div class="played">
+                    <div class="" style="position: relative;">
+                        <div class="css-1nuoroq e1g7spwk0">58%</div>
                     </div>
+                    <div class="count">109 게임</div>
                 </div>
             </div>
+        </div>
+        <div class="rank">
+            <p class="rank_font">솔로 랭크</p>
+            <div class="record">
+                <div class="record_font">
+                    <p>872전 455승 417패</p>
+                    <p>52.18%</p>
+                </div>
+            </div>
+            <img class="img"
+                 src="https://opgg-static.akamaized.net/images/medals_new/diamond.png?image=q_auto,f_webp,w_144&v=1668582433964">
+            <div class="tier_box">
+                <p class="tier">Silver 4</p>
+                <p class="point">10 LP</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 
 </div>
 
 <div class="card text">
-<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="pills-top-tab" data-bs-toggle="pill" data-bs-target="#pills-top"
                     type="button" role="tab" aria-controls="pills-top" aria-selected="true">탑
@@ -536,7 +596,8 @@
                     <td>1</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Darius.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&amp;v=1668416556212"
-                            width="32" height="32"> 다리우스</td>
+                            width="32" height="32"> 다리우스
+                    </td>
                     <td>51.39%</td>
                     <td>9.32%</td>
                     <td>27.95%</td>
@@ -553,7 +614,8 @@
                     <td>2</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Shen.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668444098360"
-                            width="32" height="32"> 쉔</td>
+                            width="32" height="32"> 쉔
+                    </td>
                     <td>52.52%</td>
                     <td>5.13%</td>
                     <td>0.95%</td>
@@ -571,7 +633,8 @@
                     <td>3</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Aatrox.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668444098360"
-                            width="32" height="32"> 아트록스</td>
+                            width="32" height="32"> 아트록스
+                    </td>
                     <td>49.46%</td>
                     <td>14.29%</td>
                     <td>35.92%</td>
@@ -589,7 +652,8 @@
                     <td>4</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Fiora.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668444098360"
-                            width="32" height="32"> 피오라</td>
+                            width="32" height="32"> 피오라
+                    </td>
                     <td>50.44%</td>
                     <td>8.62%</td>
                     <td>18.66%</td>
@@ -607,7 +671,8 @@
                     <td>5</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Mordekaiser.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741733"
-                            width="32" height="32"> 모데카이저</td>
+                            width="32" height="32"> 모데카이저
+                    </td>
                     <td>51.46%</td>
                     <td>5.87%</td>
                     <td>5.88%</td>
@@ -658,7 +723,8 @@
                     <td>2</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Belveth.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 벨베스</td>
+                            width="32" height="32"> 벨베스
+                    </td>
                     <td>51.47%</td>
                     <td>6.41%</td>
                     <td>29.77%</td>
@@ -676,7 +742,8 @@
                     <td>3</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Fiddlesticks.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 피들스틱</td>
+                            width="32" height="32"> 피들스틱
+                    </td>
                     <td>52.44%</td>
                     <td>4.45%</td>
                     <td>7.02%</td>
@@ -694,7 +761,8 @@
                     <td>4</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Graves.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 그레이브즈</td>
+                            width="32" height="32"> 그레이브즈
+                    </td>
                     <td>49.57%</td>
                     <td>15.75%</td>
                     <td>22.07%</td>
@@ -712,7 +780,8 @@
                     <td>5</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Ekko.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 에코</td>
+                            width="32" height="32"> 에코
+                    </td>
                     <td>50.70%</td>
                     <td>8.70%</td>
                     <td>5.27%</td>
@@ -745,7 +814,8 @@
                     <td>1</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Vex.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 벡스</td>
+                            width="32" height="32"> 벡스
+                    </td>
                     <td>52.17%</td>
                     <td>7.27%</td>
                     <td>11.64%</td>
@@ -763,7 +833,8 @@
                     <td>2</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Zed.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 제드</td>
+                            width="32" height="32"> 제드
+                    </td>
                     <td>51.25%</td>
                     <td>8.69%</td>
                     <td>32.59%</td>
@@ -781,7 +852,8 @@
                     <td>3</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Syndra.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 신드라</td>
+                            width="32" height="32"> 신드라
+                    </td>
                     <td>50.65%</td>
                     <td>12.45%</td>
                     <td>13.07%</td>
@@ -799,7 +871,8 @@
                     <td>4</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Sylas.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 사일러스</td>
+                            width="32" height="32"> 사일러스
+                    </td>
                     <td>49.30%</td>
                     <td>16.60%</td>
                     <td>12.35%</td>
@@ -817,7 +890,8 @@
                     <td>5</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Viktor.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 빅토르</td>
+                            width="32" height="32"> 빅토르
+                    </td>
                     <td>50.11%</td>
                     <td>10.26%</td>
                     <td>8.15%</td>
@@ -852,7 +926,8 @@
                     <td>1</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Kaisa.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 카이사</td>
+                            width="32" height="32"> 카이사
+                    </td>
                     <td>50.38%</td>
                     <td>28.01%</td>
                     <td>8.47%</td>
@@ -870,7 +945,8 @@
                     <td>2</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Jhin.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 진</td>
+                            width="32" height="32"> 진
+                    </td>
                     <td>51.41%</td>
                     <td>15.69%</td>
                     <td>1.36%</td>
@@ -888,7 +964,8 @@
                     <td>3</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Caitlyn.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 케이틀린</td>
+                            width="32" height="32"> 케이틀린
+                    </td>
                     <td>49.78%</td>
                     <td>21.25%</td>
                     <td>18.41%</td>
@@ -906,7 +983,8 @@
                     <td>4</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Samira.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32">사미라</td>
+                            width="32" height="32">사미라
+                    </td>
                     <td>51.24%</td>
                     <td>9.46%</td>
                     <td>21.96%</td>
@@ -924,7 +1002,8 @@
                     <td>5</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Tristana.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 트리스타나</td>
+                            width="32" height="32"> 트리스타나
+                    </td>
                     <td>51.79%</td>
                     <td>7.63%</td>
                     <td>1.88%</td>
@@ -959,7 +1038,8 @@
                     <td>1</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Nami.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 나미</td>
+                            width="32" height="32"> 나미
+                    </td>
                     <td>51.98%</td>
                     <td>14.56%</td>
                     <td>3.75%</td>
@@ -977,7 +1057,8 @@
                     <td>2</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Blitzcrank.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 블리츠크랭크</td>
+                            width="32" height="32"> 블리츠크랭크
+                    </td>
                     <td>51.83%</td>
                     <td>8.52%</td>
                     <td>29.12%</td>
@@ -995,7 +1076,8 @@
                     <td>3</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Janna.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 잔나</td>
+                            width="32" height="32"> 잔나
+                    </td>
                     <td>52.59%</td>
                     <td>6.04%</td>
                     <td>2.03%</td>
@@ -1013,7 +1095,8 @@
                     <td>4</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Renata.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 레나타 클라스크</td>
+                            width="32" height="32"> 레나타 클라스크
+                    </td>
                     <td>50.93%</td>
                     <td>7.21%</td>
                     <td>4.16%</td>
@@ -1031,7 +1114,8 @@
                     <td>5</td>
                     <td><img
                             src="https://opgg-static.akamaized.net/meta/images/lol/champion/Soraka.png?image=c_crop,h_103,w_103,x_9,y_9/q_auto,f_webp,w_64&v=1668492741460"
-                            width="32" height="32"> 소라카</td>
+                            width="32" height="32"> 소라카
+                    </td>
                     <td>51.12%</td>
                     <td>6.63%</td>
                     <td>3.23%</td>

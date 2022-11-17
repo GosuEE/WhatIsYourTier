@@ -1,0 +1,89 @@
+Metadata-Version: 2.1
+Name: html-table-parser-python3
+Version: 0.2.0
+Summary: A small and simple HTML table parser not requiring any external dependency.
+Home-page: https://github.com/ahobsonsayers/html-table-parser-python3
+License: AGPLv3
+Author: Arran Hobson Sayers
+Author-email: ahobsonsayers@gmail.com
+Requires-Python: >=3,<4
+Classifier: License :: Other/Proprietary License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Description-Content-Type: text/markdown
+
+# html-table-parser-python3.5+
+
+This module consists of just one small class. Its purpose is to parse HTML
+tables without help of external modules. Everything used is part of python 3.
+
+## Installation
+
+    pip install html-table-parser-python3
+
+## How to use
+
+Example Usage:
+
+    import urllib.request
+    from pprint import pprint
+    from html_table_parser.parser import HTMLTableParser
+    
+    
+    def url_get_contents(url):
+        """ Opens a website and read its binary contents (HTTP Response Body) """
+        req = urllib.request.Request(url=url)
+        f = urllib.request.urlopen(req)
+        return f.read()
+
+
+    def main():
+        url = 'http://www.twitter.com'
+        xhtml = url_get_contents(url).decode('utf-8')
+
+        p = HTMLTableParser()
+        p.feed(xhtml)
+        pprint(p.tables)
+
+
+    if __name__ == '__main__':
+        main()
+
+The parser returns a nested lists of tables containing rows containing cells
+as strings. Tags in cells are stripped and the tags text content is joined.
+The console output for parsing all tables on the twitter home page looks
+like this:
+
+```
+>>>
+[[['', 'Anmelden']],
+ [['Land', 'Code', 'Für Kunden von'],
+  ['Vereinigte Staaten', '40404', '(beliebig)'],
+  ['Kanada', '21212', '(beliebig)'],
+  ...
+  ['3424486444', 'Vodafone'],
+  ['Zeige SMS-Kurzwahlen für andere Länder']]]
+```
+
+## CLI
+
+There is also a command line interface which you can use directly to
+generate a CSV:
+
+    ./html_table_converter -u http://web.archive.org/web/20180524092138/http://metal-train.de/index.php/fahrplan.html -o metaltrain
+
+## Credit
+
+All Credit goes to Josua Schmid (schmijos). This is all his work, I just uploaded it to PyPi. Original repository can be found at:
+
+https://github.com/schmijos/html-table-parser-python3
+
+## License
+
+GNU GPL v3
+
