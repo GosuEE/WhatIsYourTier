@@ -138,7 +138,7 @@ def post_show():
             user_info = db.user.find_one({"id": payload['id']})['id']
             number = request.form['num']
             one_post = db.board.find_one({'number': int(number)})
-            user = one_post['id']
+            user = one_post['name']
             title = one_post['title']
             contents = one_post['contents']
             return jsonify({'title': title, 'contents': contents, 'user': user})
