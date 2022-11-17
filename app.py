@@ -30,6 +30,20 @@ def board_list():
     board_list = list(db.board.find({},{'_id':False}))
     return jsonify({'result': 'success', 'all_board': board_list})
 
+@app.route("/cookies_cheak", methods=["GET"])
+def cookies_cheak():
+    token_receive = request.cookies.get('mytoken')
+    cookies_cheak = 0
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.user.find_one({"id": payload['id']})
+        cookies_cheak = 1
+        return jsonify({'cookies_cheak': cookies_cheak})
+    except jwt.ExpiredSignatureError:
+        return jsonify({'cookies_cheak': cookies_cheak})
+    except jwt.exceptions.DecodeError:
+        return jsonify({'cookies_cheak': cookies_cheak})
+
 # @app.route("/users", methods=["GET"])
 # # def board_get():
 #     board_list = list(db.board.find({},{'_id':False}))
